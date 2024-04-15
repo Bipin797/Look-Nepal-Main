@@ -1,0 +1,230 @@
+/* ENTIRE PAGE  */
+
+body {
+  /* font-family: "Montserrat", sans-serif; */
+  margin: 0;
+  background-color: white;
+  color: black;
+}
+
+/* VIEWPORT */
+.main {
+  display: flex;
+  height: 70vh;
+  padding: 0.5rem;
+  flex-direction: row;
+  /* align-items: center; */
+  justify-content: center;
+  /* background-color: #fff2e1; */
+}
+
+/* NAV BAR */
+/* .nav {
+  padding: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+} */
+
+.nav-div {
+  padding: 1rem;
+  /* background-color: #e8efcf; */
+}
+
+.navbar-brand {
+  font-weight: bold;
+}
+
+.right-nav-section {
+  height: 40px;
+  width: 250px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+.vrt-line {
+  height: 1.5rem;
+  width: 1px;
+  /* border: 0.2px solid grey; */
+  background-color: grey;
+}
+
+hr {
+  margin: 0;
+}
+
+/* Main Search */
+
+.jobs-nepal-div {
+  margin-bottom: 15px;
+  display: inline-block;
+}
+
+.find-jobs-div {
+  margin-bottom: 15px;
+}
+
+.find-jobs-para {
+  font-size: 15px;
+  opacity: 50%;
+}
+
+/* Search Box */
+
+.jobs-nepal-div p {
+  font-weight: bold;
+  /* letter-spacing: 10px; */
+  font-size: 80px;
+  border-right: 2px solid;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  animation: typing 3s steps(14), cursor 0.5s step-end infinite alternate;
+}
+
+/* cursor blinking */
+@keyframes cursor {
+  50% {
+    border-color: transparent;
+  }
+}
+
+/* typing effect */
+@keyframes typing {
+  from {
+    width: 27%;
+  }
+}
+
+.search-block {
+  display: flex;
+  padding: 0.5rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-box {
+  height: 62px;
+  width: 552px;
+  border: 1px solid black;
+  border-radius: 2rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: white;
+  box-shadow: 10px 10px lightblue;
+}
+
+.search-icon {
+  margin: 1rem 0 0 1rem;
+  font-size: 1.5rem;
+}
+
+.text-search input {
+  height: 60px;
+  border: none;
+  border-radius: 2rem;
+  width: 400px;
+  outline-width: 0;
+  margin-left: 0.9rem;
+}
+
+.search-button-div {
+  height: 60px;
+  width: 120px;
+  position: relative;
+  background-color: blue;
+  border-radius: 2rem 2rem 2rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-button-div:hover {
+  opacity: 82%;
+}
+
+.search-button {
+  color: aliceblue;
+  font-size: 1rem;
+  background-color: unset;
+  border: none;
+}
+
+h1 {
+  font-weight: bold;
+}
+
+.badge {
+  border: none;
+  border-radius: 100px;
+  padding: 0.25rem 1rem 0.25rem 1rem;
+  font-weight: 700;
+  height: 2rem;
+  width: fit-content;
+}
+
+/* JOB LISTS */
+
+.job-lists {
+  padding: 0 150px 0 150px;
+  display: flex;
+  flex-direction: row;
+  /* justify-content: center; */
+  justify-content: space-around;
+  padding-bottom: 50px;
+  /* overflow: hidden; */
+}
+
+.card {
+  width: 500px;
+  border: 0.5px solid grey;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 1rem;
+}
+
+.job-description {
+  width: 600px;
+  border: 0.5px solid grey;
+  border-radius: 10px;
+  padding: 20px;
+  /* overflow: hidden; */
+  position: sticky;
+  top: 0;
+  /* display: block; */
+}
+
+.footer {
+  height: 150px;
+  width: 100%;
+}
+
+footer {
+  padding: 10px;
+}
+
+.footer-top {
+  list-style: none;
+}
+
+.global-footer {
+  width: 100%;
+}
+
+.footer li {
+  font-family: "Courier New", Courier, monospace;
+  color: grey;
+  display: inline-block;
+  margin-right: 50px;
+}
+
+.footer li:hover {
+  text-decoration: underline;
+}
