@@ -60,23 +60,20 @@ hr {
 
 /* Main Search */
 
-.jobs-nepal-div {
+.look-nepal-div {
   margin-bottom: 15px;
   display: inline-block;
-}
-
-.find-jobs-div {
-  margin-bottom: 15px;
 }
 
 .find-jobs-para {
   font-size: 15px;
   opacity: 50%;
+  margin-bottom: 2rem;
 }
 
 /* Search Box */
 
-.jobs-nepal-div p {
+.look-nepal-div p {
   font-weight: bold;
   /* letter-spacing: 10px; */
   font-size: 80px;
@@ -118,7 +115,7 @@ hr {
   flex-direction: row;
   justify-content: space-between;
   background-color: white;
-  box-shadow: 10px 10px lightblue;
+  box-shadow: 10px 10px #bed7dc;
 }
 
 .search-icon {
@@ -130,20 +127,21 @@ hr {
   height: 60px;
   border: none;
   border-radius: 2rem;
-  width: 400px;
+  width: 300px;
   outline-width: 0;
-  margin-left: 0.9rem;
+  margin-left: 0.6rem;
 }
 
 .search-button-div {
   height: 60px;
-  width: 120px;
-  position: relative;
-  background-color: blue;
+  width: 110px;
+  /* position: relative; */
+  background-color: #0e46a3;
   border-radius: 2rem 2rem 2rem 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-left: 1rem;
 }
 
 .search-button-div:hover {
@@ -170,10 +168,30 @@ h1 {
   width: fit-content;
 }
 
+.location-icon-div {
+  display: flex;
+  justify-content: center;
+}
+
+.location-icon {
+  margin: 1rem 0 0 1rem;
+  font-size: 1.7rem;
+  color: grey;
+}
+
+.location-icon:hover {
+  color: black;
+  /* font-size: 1.rem; */
+}
+
 /* JOB LISTS */
 
+.job-list-hr {
+  margin-bottom: 50px;
+}
+
 .job-lists {
-  padding: 0 150px 0 150px;
+  padding: 0 145px;
   display: flex;
   flex-direction: row;
   /* justify-content: center; */
@@ -182,12 +200,63 @@ h1 {
   /* overflow: hidden; */
 }
 
+.job-lists p {
+  font-size: 0.8rem;
+  margin-left: 1rem;
+}
+
 .card {
   width: 500px;
   border: 0.5px solid grey;
   border-radius: 10px;
   padding: 20px;
   margin-bottom: 1rem;
+}
+
+.card:hover {
+  box-shadow:
+  /* inset 0 -3em 3em, */
+  /* 0 0 0 2px white, */ 0.1em 0.2em 0.5em
+    #bed7dc;
+}
+
+.card-body {
+  padding: 0;
+}
+
+.card-body li {
+  list-style-type: circle;
+}
+
+.card-body ul {
+  margin-top: 1rem;
+}
+
+.card-title {
+  /* font-family: "Montserrat Alternates", sans-serif; */
+  font-size: 22px;
+  font-weight: bold;
+  letter-spacing: 0.2px;
+}
+
+.card-text {
+  color: grey;
+}
+
+.job-feature-box {
+  /* height: 1.5rem;
+  width: 100px; */
+  /* border: 1px solid black; */
+  display: inline-block;
+  border-radius: 1rem;
+  background-color: #eeeeee;
+  padding: 0.2rem 0.5rem;
+}
+
+.job-feature-box p {
+  font-weight: bold;
+  color: rgb(89, 86, 86);
+  margin: 0;
 }
 
 .job-description {
@@ -199,6 +268,23 @@ h1 {
   position: sticky;
   top: 0;
   /* display: block; */
+}
+
+.apply-btn {
+  background-color: #0e46a3;
+  font-weight: bold;
+  color: white;
+}
+
+.bookmark-btn {
+  margin: 1rem;
+  background-color: grey;
+  background-color: #eeeeee;
+}
+
+/* CHANGE SELECTION EFFECT ON BOOKMARK BUTTON TO CHANGE ITS COLOR */
+.bookmark-btn:hover {
+  color: #0e46a3;
 }
 
 .footer {
@@ -214,6 +300,10 @@ footer {
   list-style: none;
 }
 
+.footer-top li a {
+  color: grey;
+}
+
 .global-footer {
   width: 100%;
 }
@@ -227,4 +317,104 @@ footer {
 
 .footer li:hover {
   text-decoration: underline;
+}
+
+/* SIGN IN PAGE */
+
+.sign-in-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+}
+
+.sign-in-main div h1 {
+  margin: 3rem 0;
+}
+
+.sign-in-form {
+  height: 520px;
+  width: 500px;
+  border: 0.5px solid grey;
+  border-radius: 8px;
+  padding: 24px;
+  /* display: flex;
+  flex-direction: column; */
+}
+
+.sign-in-form h5 {
+  font-weight: bold;
+}
+
+.sign-in-btns {
+  display: flex;
+  justify-content: center;
+}
+
+.sign-in-div {
+  height: 45px;
+  width: 450px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  /* align-items: center; */
+  /* padding: 2px; */
+  border: 0.5px solid grey;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+}
+
+/* .sign-in-div p {
+  font-family: "Montserrat", sans-serif;
+  font-weight: bold;
+} */
+
+.sign-in-google {
+  width: 100%;
+  background-color: white;
+  border: 0.5px solid grey;
+  border-radius: 5px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.google-icon {
+  font-size: 1.5rem;
+  align-self: flex-start;
+}
+
+.continue-text {
+  width: 90%;
+}
+
+.sign-in-fb {
+  width: 100%;
+  background-color: white;
+  border: 0.5px solid grey;
+  border-radius: 5px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.facebook-icon {
+  font-size: 1.5rem;
+  align-self: flex-start;
+}
+
+.email-address-input {
+  width: 100%;
+  border: 0.5px solid grey;
+  border-radius: 5px;
+}
+
+.continue-btn {
+  width: 100%;
+  background-color: #0e46a3;
+  border: 0.5px solid grey;
+  border-radius: 5px;
+  color: white;
 }

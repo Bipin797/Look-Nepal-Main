@@ -10,6 +10,10 @@
       href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
       rel="stylesheet"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=MuseoModerno:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
     <!-- Bootstrap -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
@@ -32,49 +36,6 @@
     ></script>
   </head>
   <body>
-    <!-- NAV BAR -->
-    <!-- <div class="nav"> -->
-    <!-- <nav class="navbar navbar-expand-lg bg-body-tertiary">
-      <div class="left-nav-section">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="#">Jobs Nepal</a>
-          <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Company Reviews</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" aria-current="page" href="#"
-                  >Search Salary</a
-                >
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div class="right-nav-section">
-        <div>
-          <a href="">Sign In</a>
-        </div>
-        <div class="vrt-line"></div>
-        <div><a href="">Employers / Post Jobs</a></div>
-      </div>
-    </nav> -->
-    <!-- </div> -->
     <div class="nav-div">
       <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
@@ -99,12 +60,12 @@
                 <a class="nav-link" href="#">Company Reviews</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" aria-current="page">Search Salary</a>
+                <a class="nav-link" href="#">Search Salary</a>
               </li>
             </ul>
             <div class="right-nav-section">
               <div>
-                <a href="" style="color: rgb(28, 28, 172); font-weight: 600"
+                <a href="/signIn.html" style="color: #0e46a3; font-weight: 600"
                   >Sign In</a
                 >
               </div>
@@ -119,12 +80,13 @@
     <!-- MIDDLE SECTION -->
     <div class="main">
       <div class="search-block">
-        <div class="jobs-nepal-div">
+        <div class="look-nepal-div">
           <p>Looking for a Job?</p>
         </div>
         <div class="find-jobs-div">
           <p class="find-jobs-para">Find Jobs Near You</p>
         </div>
+
         <!-- Search Box -->
         <div class="search-box">
           <div><i class="fa-solid fa-magnifying-glass search-icon"></i></div>
@@ -135,100 +97,157 @@
               class="border-0 shadow-none"
             />
           </div>
+          <div class="location-icon-div">
+            <!-- <p style="font-size: 0.7rem">Location</p> -->
+            <i class="fa-solid fa-location-dot location-icon"></i>
+          </div>
           <div class="search-button-div">
             <button type="button" class="search-button">Search</button>
           </div>
         </div>
 
-        <div
+        <!-- <div
           class="components-base-control__field caf-afe-fb-ba-aeecf-1t5ousf ej5x27r3"
-        ></div>
+        ></div> -->
       </div>
     </div>
+    <hr class="job-list-hr" />
 
     <!-- JOB LISTS -->
 
     <div class="job-lists">
       <div class="cards">
-        <p>Jobs based on your activity on Look Nepal</p>
+        <!-- <p>Jobs based on your activity on Look Nepal</p> -->
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Front End Developer</h5>
-            <p class="card-text">
-              Some quick example text to build on the card title and make up the
-              bulk of the card's content.
-            </p>
+            <p class="card-company">Uber Eats 3.5</p>
+            <div class="job-feature-box">
+              <p class="feature-salary">Rs.77,788 - Rs.152,522 a month</p>
+            </div>
+            <div class="job-feature-box">
+              <p class="feature-type">Full-time</p>
+            </div>
             <ul>
-              <li>Salary</li>
-              <li>Position</li>
+              <li>Full Time (37.5 hours a week), Part-time, Flexible.</li>
+              <li>A System Integrations Engineer</li>
               <li>Remote</li>
             </ul>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
+            <p class="card-text">Posted 6 days ago</p>
           </div>
         </div>
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Project Manager</h5>
-            <p class="card-text">
-              Some quick example text to build on the card title and make up the
-              bulk of the card's content.
-            </p>
+            <p class="card-text">Pied Piper</p>
+            <div class="job-feature-box">
+              <p class="feature-salary">From Rs.88,000 a month</p>
+            </div>
+            <div class="job-feature-box">
+              <p class="feature-type">Full-time</p>
+            </div>
+            <div class="job-feature-box">
+              <p class="feature-type">Contract</p>
+            </div>
             <ul>
               <li>Salary</li>
               <li>Position</li>
               <li>Remote</li>
             </ul>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
+            <p class="card-text">Posted 6 days ago</p>
           </div>
         </div>
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Cloud Engineer</h5>
-            <p class="card-text">
-              Some quick example text to build on the card title and make up the
-              bulk of the card's content.
-            </p>
+            <p class="card-text">Microsoft Corporation</p>
+            <div class="job-feature-box">
+              <p class="feature-salary">Rs.150,000 a month</p>
+            </div>
+            <div class="job-feature-box">
+              <p class="feature-type">Full-time</p>
+            </div>
             <ul>
               <li>Salary</li>
               <li>Position</li>
               <li>Remote</li>
             </ul>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
+            <p class="card-text">Posted 6 days ago</p>
           </div>
         </div>
       </div>
       <div class="card job-description">
-        <h5>Job Description</h5>
-        <br />
-        <h6>Company Name</h6>
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident
-          tenetur suscipit nobis aliquid blanditiis fugit expedita omnis
-          assumenda iste molestiae sequi hic facere reprehenderit laboriosam,
-          aspernatur quis, voluptatibus perspiciatis! Consequuntur. Lorem ipsum
-          dolor sit amet consectetur, adipisicing elit. Beatae fugiat fugit
-          perferendis magnam necessitatibus, ducimus praesentium tempora
-          provident facere voluptas rem laborum ipsum facilis impedit.
-          Architecto, esse doloribus! Ut, <fugit class="lorem"></fugit>
-        </p>
+        <div class="card-body">
+          <h5 class="card-title">Front End Developer</h5>
+          <p class="card-company">Uber Eats 3.5</p>
+          <div class="job-feature-box">
+            <p class="feature-salary">Rs.77,788 - Rs.152,522 a month</p>
+          </div>
+          <div class="job-feature-box">
+            <p class="feature-type">Full-time</p>
+          </div>
+          <p style="margin: 1rem 0 0 0">Full Time | Remote</p>
+          <div class="btn apply-btn">Apply Now</div>
+          <div class="btn bookmark-btn">
+            <i class="fa-regular fa-bookmark"></i>
+          </div>
+          <p class="card-text">Posted 6 days ago</p>
+          <hr />
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero fuga
+            et dolor architecto similique optio quia. Tenetur ex, nulla nam
+            debitis delectus quam repellat amet ipsa. Illum blanditiis nisi
+            eveniet! Ad ullam ex sequi voluptate iure, voluptatum atque
+            laudantium minus deserunt. Amet nesciunt fugiat iure consectetur
+            asperiores, molestiae porro neque fuga dolores deserunt eius ullam
+            assumenda ipsum laudantium! Minus, consequuntur! Quod est soluta,
+            delectus nam modi repudiandae sed error facere libero corporis
+            deserunt totam iure aspernatur qui! Rem quaerat, modi corporis in et
+            obcaecati magni dolorem, repellendus, nihil inventore ducimus! Ab,
+            temporibus. Amet facilis nihil ullam dolorum optio earum doloremque.
+            Perferendis aspernatur pariatur, deserunt cupiditate qui doloribus
+            illum unde voluptates veniam laborum rem inventore fugit mollitia
+            nobis porro? Repellat, repellendus? Illo laborum ratione molestiae
+            iure deserunt nobis exercitationem rem inventore eos vero, porro
+            dignissimos quae, optio cum? Recusandae officia nemo, nobis
+            repellendus commodi, delectus unde quibusdam doloribus laboriosam
+            omnis explicabo! Obcaecati consectetur provident fuga eaque a nam
+            fugit omnis cumque suscipit? Fuga tempore rerum placeat!
+            Reprehenderit excepturi libero possimus odit voluptatem vel, totam,
+            earum sapiente perspiciatis explicabo vitae voluptates quos? Labore
+            minima eius sunt dolore magni, ab dolor eligendi exercitationem
+            assumenda tempora itaque doloribus vitae excepturi illum numquam
+            ducimus unde pariatur aliquid officia. Quibusdam tempore nam tenetur
+            accusantium illo culpa! Sequi neque impedit deserunt fugiat quam
+            consequuntur, similique, dignissimos nisi enim quos incidunt. Maxime
+            molestiae natus sequi corporis ipsum velit ut aspernatur. Labore
+            veritatis unde neque repellendus? Odio, rem impedit? Expedita alias,
+            beatae iste, corrupti quidem, dolore magni impedit sit reiciendis
+            hic fugit? Voluptas officiis dolores maiores fugit neque amet est
+            voluptates fuga ut laudantium, rerum illo dolore earum numquam.
+            Similique tempore voluptate nostrum, explicabo eligendi, numquam
+            iste consectetur eius doloremque, ipsam non! Sapiente placeat
+            repellat at maxime nobis autem accusamus fuga dignissimos
+            reprehenderit quaerat? Fugiat sed nisi eos totam.
+          </p>
+        </div>
       </div>
     </div>
     <hr />
     <div class="footer">
       <footer class="global-footer">
         <ul class="footer-top">
-          <li>Hiring Lab</li>
-          <li>Career Advice</li>
-          <li>Browse Jobs</li>
-          <li>Browse Companies</li>
-          <li>Salaries</li>
-          <li>Look Nepal Events</li>
-          <li>Work at indeed</li>
-          <li>Countries</li>
-          <li>About</li>
-          <li>Help Centre</li>
-          <li>ESG at Look Nepal</li>
-          <li>Post a job</li>
+          <li><a href="">Hiring Lab</a></li>
+          <li><a href="">Career Advice</a></li>
+          <li><a href="">Browse Jobs</a></li>
+          <li><a href="">Browse Companies</a></li>
+          <li><a href="">Salaries</a></li>
+          <li><a href="">Work at Look Nepal</a></li>
+          <li><a href="">Locations</a></li>
+          <li><a href="">About</a></li>
+          <li><a href="">Help Centre</a></li>
+          <li><a href="">ESG at Look Nepal</a></li>
+          <li><a href="">Post a job</a></li>
         </ul>
         <br />
         <ul class="footer-down">
