@@ -211,7 +211,7 @@ h1 {
 
 .card {
   width: 450px;
-  border: 0.5px solid grey;
+  border: 0.5px solid lightgray;
   border-radius: 10px;
   padding: 20px;
   margin-bottom: 1rem;
@@ -266,7 +266,7 @@ h1 {
 .fastviewjob {
   background-color: white;
   width: 550px;
-  border: 0.5px solid grey;
+  border: 0.5px solid lightgrey;
   border-radius: 10px;
   /* padding: 2rem 1rem 0 1rem; */
   height: 100%;
