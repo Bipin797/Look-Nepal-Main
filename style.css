@@ -397,7 +397,7 @@ footer {
   font-weight: bold;
 } */
 
-.sign-in-google {
+/* .sign-in-google {
   width: 100%;
   background-color: white;
   border: 0.5px solid grey;
@@ -406,7 +406,7 @@ footer {
   display: flex;
   justify-content: center;
   align-items: center;
-}
+} */
 
 .google-icon {
   font-size: 1.5rem;
