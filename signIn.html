@@ -34,8 +34,55 @@
       src="https://kit.fontawesome.com/faed8028ee.js"
       crossorigin="anonymous"
     ></script>
+    <!-- Google Sign-In SDK -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Facebook SDK -->
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
   </head>
   <body style="background-color: #f6f5f2">
+    <script>
+      // Initialize Facebook SDK
+      window.fbAsyncInit = function () {
+        FB.init({
+          appId: 'YOUR_FACEBOOK_APP_ID', // Replace with your Facebook App ID
+          cookie: true,
+          xfbml: true,
+          version: 'v12.0',
+        });
+      };
+
+      // Facebook Sign-In Function
+      function fbLogin() {
+        FB.login(
+          function (response) {
+            if (response.status === 'connected') {
+              console.log('Logged in with Facebook:', response);
+            } else {
+              console.log('Facebook login failed:', response);
+            }
+          },
+          { scope: 'email' }
+        );
+      }
+
+      // Google Sign-In Callback
+      function handleCredentialResponse(response) {
+        console.log('Google ID Token:', response.credential);
+      }
+
+      // Initialize Google Sign-In
+      window.onload = function () {
+        google.accounts.id.initialize({
+          client_id: '1063003454290-316rnkv4d1pdatk48hkrehqt7ils603g.apps.googleusercontent.com', // Replace with your Google Client ID
+          callback: handleCredentialResponse,
+        });
+        google.accounts.id.renderButton(
+          document.getElementById('googleSignInButton'),
+          { theme: 'outline', size: 'large' }
+        );
+      };
+    </script>
+
     <div>
       <div class="sign-in-main">
         <div><h1>Look Nepal</h1></div>
@@ -63,13 +110,17 @@
           <div sign-in-btns>
             <!-- SIGN IN WITH GOOGLE -->
             <div class="sign-in-div">
-             
-              <button class="sign-in-google"> <div><i class="fa-brands fa-google google-icon"></i></div><div class="continue-text">Continue with Google</div></button>
+              <div id="googleSignInButton"></div>
             </div>
 
             <!-- SIGN IN WITH FACEBOOK -->
             <div class="sign-in-div">
-              <button class="sign-in-fb"><div><i class="fa-brands fa-facebook facebook-icon"></i></div><div class="continue-text">Continue with Facebook</div></button>
+              <button class="sign-in-fb" onclick="fbLogin()">
+                <div>
+                  <i class="fa-brands fa-facebook facebook-icon"></i>
+                </div>
+                <div class="continue-text">Continue with Facebook</div>
+              </button>
             </div>
           </div>
           <br />
@@ -79,7 +130,11 @@
           <div class="sign-in-div" style="border: 0.5px solid grey">
             <input class="email-address-input"></input>
           </div>
-          <div class="sign-in-div"><button class="continue-btn">Continue <i class="fa-solid fa-arrow-right"></i></button></div>
+          <div class="sign-in-div">
+            <button class="continue-btn">
+              Continue <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
           <div></div>
         </div>
       </div>
