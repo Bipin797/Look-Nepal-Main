@@ -36,53 +36,8 @@
     ></script>
     <!-- Google Sign-In SDK -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <!-- Facebook SDK -->
-    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
   </head>
   <body style="background-color: #f6f5f2">
-    <script>
-      // Initialize Facebook SDK
-      window.fbAsyncInit = function () {
-        FB.init({
-          appId: '30160999036877836 ', // Replace with your Facebook App ID
-          cookie: true,
-          xfbml: true,
-          version: 'v12.0',
-        });
-      };
-
-      // Facebook Sign-In Function
-      function fbLogin() {
-        FB.login(
-          function (response) {
-            if (response.status === 'connected') {
-              console.log('Logged in with Facebook:', response);
-            } else {
-              console.log('Facebook login failed:', response);
-            }
-          },
-          { scope: 'email' }
-        );
-      }
-
-      // Google Sign-In Callback
-      function handleCredentialResponse(response) {
-        console.log('Google ID Token:', response.credential);
-      }
-
-      // Initialize Google Sign-In
-      window.onload = function () {
-        google.accounts.id.initialize({
-          client_id: '1063003454290-316rnkv4d1pdatk48hkrehqt7ils603g.apps.googleusercontent.com', // Replace with your Google Client ID
-          callback: handleCredentialResponse,
-        });
-        google.accounts.id.renderButton(
-          document.getElementById('googleSignInButton'),
-          { theme: 'outline', size: 'large' }
-        );
-      };
-    </script>
-
     <div>
       <div class="sign-in-main">
         <div><h1>Look Nepal</h1></div>
@@ -115,11 +70,9 @@
 
             <!-- SIGN IN WITH FACEBOOK -->
             <div class="sign-in-div">
-              <button class="sign-in-fb" onclick="fbLogin()">
-                <div>
-                  <i class="fa-brands fa-facebook facebook-icon"></i>
-                </div>
-                <div class="continue-text">Continue with Facebook</div>
+              <button onclick="facebookLogin()" style="width:100%; padding:10px;">
+                <img src="https://static.xx.fbcdn.net/rsrc.php/yd/r/hlvibnBVrEb.svg" alt="fb icon" style="height:16px; vertical-align:middle; margin-right:8px;">
+                Continue with Facebook
               </button>
             </div>
           </div>
@@ -164,5 +117,56 @@
         </footer>
       </div>
     </div>
+
+    <!-- Facebook SDK & Login -->
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '30160999036877836',
+          cookie     : true,
+          xfbml      : true,
+          version    : 'v19.0'
+        });
+        FB.AppEvents.logPageView();
+      };
+
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) return;
+         js = d.createElement(s); js.id = id;
+         js.src = "https://connect.facebook.net/en_US/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+
+      function facebookLogin() {
+        FB.login(function(response) {
+          if (response.authResponse) {
+            FB.api('/me', {fields: 'name,email'}, function(profile) {
+              alert('Logged in as: ' + profile.name + '\nEmail: ' + profile.email);
+            });
+          } else {
+            alert('User cancelled login or did not fully authorize.');
+          }
+        }, {scope: 'public_profile,email'});
+      }
+    </script>
+
+    <!-- Google Sign-In Init -->
+    <script>
+      function handleCredentialResponse(response) {
+        console.log('Google ID Token:', response.credential);
+      }
+
+      window.onload = function () {
+        google.accounts.id.initialize({
+          client_id: '1063003454290-316rnkv4d1pdatk48hkrehqt7ils603g.apps.googleusercontent.com',
+          callback: handleCredentialResponse,
+        });
+        google.accounts.id.renderButton(
+          document.getElementById('googleSignInButton'),
+          { theme: 'outline', size: 'large' }
+        );
+      };
+    </script>
   </body>
 </html>
