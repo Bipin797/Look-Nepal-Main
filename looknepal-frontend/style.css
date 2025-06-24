@@ -1,0 +1,448 @@
+/* ENTIRE PAGE  */
+
+body {
+  /* font-family: "Montserrat", sans-serif; */
+  margin: 0;
+  background-color: white;
+  color: black;
+}
+
+/* VIEWPORT */
+.main {
+  display: flex;
+  height: 70vh;
+  padding: 0.5rem;
+  flex-direction: row;
+  /* align-items: center; */
+  justify-content: center;
+  /* background-color: #fff2e1; */
+}
+
+/* NAV BAR */
+/* .nav {
+  padding: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+} */
+
+.nav-div {
+  padding: 1rem;
+  /* background-color: #e8efcf; */
+}
+
+.navbar-brand {
+  font-weight: bold;
+}
+
+.right-nav-section {
+  height: 40px;
+  width: 250px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+.vrt-line {
+  height: 1.5rem;
+  width: 1px;
+  /* border: 0.2px solid grey; */
+  background-color: grey;
+}
+
+hr {
+  margin: 0;
+}
+
+/* Main Search */
+
+.look-nepal-div {
+  margin-bottom: 15px;
+  display: inline-block;
+}
+
+.find-jobs-para {
+  font-size: 15px;
+  opacity: 50%;
+  margin-bottom: 2rem;
+}
+
+/* Search Box */
+
+.look-nepal-div p {
+  font-weight: bold;
+  /* letter-spacing: 10px; */
+  font-size: 80px;
+  border-right: 2px solid;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  animation: typing 3s steps(14), cursor 0.5s step-end infinite alternate;
+}
+
+/* cursor blinking */
+@keyframes cursor {
+  50% {
+    border-color: transparent;
+  }
+}
+
+/* typing effect */
+@keyframes typing {
+  from {
+    width: 27%;
+  }
+}
+
+.search-block {
+  display: flex;
+  padding: 0.5rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-box {
+  height: 62px;
+  width: 552px;
+  border: 1px solid black;
+  border-radius: 2rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: white;
+  box-shadow: 10px 10px #bed7dc;
+}
+
+.search-icon {
+  margin: 1rem 0 0 1rem;
+  font-size: 1.5rem;
+}
+
+.text-search input {
+  height: 60px;
+  border: none;
+  border-radius: 2rem;
+  width: 300px;
+  outline-width: 0;
+  margin-left: 0.6rem;
+}
+
+.search-button-div {
+  height: 60px;
+  width: 110px;
+  /* position: relative; */
+  background-color: #0e46a3;
+  border-radius: 2rem 2rem 2rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 1rem;
+}
+
+.search-button-div:hover {
+  opacity: 82%;
+}
+
+.search-button {
+  color: aliceblue;
+  font-size: 1rem;
+  background-color: unset;
+  border: none;
+}
+
+h1 {
+  font-weight: bold;
+}
+
+.badge {
+  border: none;
+  border-radius: 100px;
+  padding: 0.25rem 1rem 0.25rem 1rem;
+  font-weight: 700;
+  height: 2rem;
+  width: fit-content;
+}
+
+.location-icon-div {
+  display: flex;
+  justify-content: center;
+}
+
+.location-icon {
+  margin: 1rem 0 0 1rem;
+  font-size: 1.7rem;
+  color: grey;
+}
+
+.location-icon:hover {
+  color: black;
+  /* font-size: 1.rem; */
+}
+
+/* JOB LISTS */
+
+.job-list-hr {
+  margin-bottom: 50px;
+}
+
+.job-lists {
+  padding: 0 145px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  /* justify-content: space-around; */
+  padding-bottom: 50px;
+  /* overflow: hidden; */
+}
+
+.job-lists p {
+  font-size: 0.8rem;
+  margin-left: 1rem;
+}
+
+.cards {
+  margin-right: 1.5rem;
+}
+
+.card {
+  width: 450px;
+  border: 0.5px solid lightgray;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 1rem;
+}
+
+.card:hover {
+  box-shadow:
+  /* inset 0 -3em 3em, */
+  /* 0 0 0 2px white, */ 0.1em 0.2em 0.5em
+    #bed7dc;
+}
+
+.card-body {
+  padding: 0;
+}
+
+.card-body li {
+  list-style-type: circle;
+}
+
+.card-body ul {
+  margin-top: 1rem;
+}
+
+.card-title {
+  /* font-family: "Montserrat Alternates", sans-serif; */
+  font-size: 22px;
+  font-weight: bold;
+  letter-spacing: 0.2px;
+}
+
+.card-text {
+  color: grey;
+}
+
+.job-feature-box {
+  /* height: 1.5rem;
+  width: 100px; */
+  /* border: 1px solid black; */
+  display: inline-block;
+  border-radius: 1rem;
+  background-color: #eeeeee;
+  padding: 0.2rem 0.5rem;
+}
+
+.job-feature-box p {
+  font-weight: bold;
+  color: rgb(89, 86, 86);
+  margin: 0;
+}
+
+.fastviewjob {
+  background-color: white;
+  width: 550px;
+  border: 0.5px solid lightgrey;
+  border-radius: 10px;
+  /* padding: 2rem 1rem 0 1rem; */
+  height: 100%;
+  max-height: 100%;
+  min-height: 100%;
+  position: sticky !important;
+  top: 1rem;
+  overflow: hidden;
+  margin: 0;
+  /* display: flex; */
+}
+
+.selected-job-title {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 10;
+}
+
+.apply-btn {
+  background-color: #0e46a3;
+  font-weight: bold;
+  color: white;
+}
+
+.bookmark-btn {
+  margin: 1rem;
+  background-color: grey;
+  background-color: #eeeeee;
+}
+
+/* CHANGE SELECTION EFFECT ON BOOKMARK BUTTON TO CHANGE ITS COLOR */
+.bookmark-btn:hover {
+  color: #0e46a3;
+}
+
+.fastjobview-details {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1;
+  width: 100%;
+  height: 800px;
+  /* max-height: 100%;
+  min-height: 100%; */
+  border: 0 solid #ccc;
+  overflow-y: auto;
+}
+
+.footer {
+  height: 150px;
+  width: 100%;
+}
+
+footer {
+  padding: 10px;
+}
+
+.footer-top {
+  list-style: none;
+}
+
+.footer-top li a {
+  color: grey;
+}
+
+.global-footer {
+  width: 100%;
+}
+
+.footer li {
+  font-family: "Courier New", Courier, monospace;
+  color: grey;
+  display: inline-block;
+  margin-right: 50px;
+}
+
+.footer li:hover {
+  text-decoration: underline;
+}
+
+/* SIGN IN PAGE */
+
+.sign-in-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+}
+
+.sign-in-main div h1 {
+  margin: 3rem 0;
+}
+
+.sign-in-form {
+  height: 520px;
+  width: 500px;
+  border: 0.5px solid grey;
+  border-radius: 8px;
+  padding: 24px;
+  /* display: flex;
+  flex-direction: column; */
+}
+
+.sign-in-form h5 {
+  font-weight: bold;
+}
+
+.sign-in-btns {
+  display: flex;
+  justify-content: center;
+}
+
+.sign-in-div {
+  height: 45px;
+  width: 450px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  /* align-items: center; */
+  /* padding: 2px; */
+  border: 0.5px solid grey;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+}
+
+/* .sign-in-div p {
+  font-family: "Montserrat", sans-serif;
+  font-weight: bold;
+} */
+
+/* .sign-in-google {
+  width: 100%;
+  background-color: white;
+  border: 0.5px solid grey;
+  border-radius: 5px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} */
+
+.google-icon {
+  font-size: 1.5rem;
+  align-self: flex-start;
+}
+
+.continue-text {
+  width: 90%;
+}
+
+.sign-in-fb {
+  width: 100%;
+  background-color: white;
+  border: 0.5px solid grey;
+  border-radius: 5px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.facebook-icon {
+  font-size: 1.5rem;
+  align-self: flex-start;
+}
+
+.email-address-input {
+  width: 100%;
+  border: 0.5px solid grey;
+  border-radius: 5px;
+}
+
+.continue-btn {
+  width: 100%;
+  background-color: #0e46a3;
+  border: 0.5px solid grey;
+  border-radius: 5px;
+  color: white;
+}
