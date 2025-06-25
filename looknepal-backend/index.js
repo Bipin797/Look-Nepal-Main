@@ -1,7 +1,5 @@
 const { MongoClient } = require("mongodb");
-
-const uri =
-  "mongodb+srv://looknepal:541bpsMn9v2b8IWe@looknepalcluster.ffr25sz.mongodb.net/?retryWrites=true&w=majority&appName=LookNepalCluster";
+require("dotenv").config(); // Load environment variables from .env file
 
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
