@@ -374,6 +374,42 @@ footer {
   font-weight: bold;
 }
 
+/* Facebook Sign-in Button Styling */
+.facebook-btn {
+  width: 100%;
+  padding: 12px 16px;
+  background-color: #1877F2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+  margin-bottom: 10px;
+}
+
+.facebook-btn:hover {
+  background-color: #166fe5;
+}
+
+.facebook-btn:active {
+  background-color: #1464cc;
+  transform: translateY(1px);
+}
+
+.facebook-btn:disabled {
+  background-color: #8bb6f0;
+  cursor: not-allowed;
+}
+
+#facebookBtnText {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 .sign-in-btns {
   display: flex;
   justify-content: center;

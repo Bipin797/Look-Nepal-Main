@@ -70,9 +70,11 @@
 
             <!-- SIGN IN WITH FACEBOOK -->
             <div class="sign-in-div">
-              <button onclick="facebookLogin()" style="width:100%; padding:10px;">
-                <img src="https://static.xx.fbcdn.net/rsrc.php/yd/r/hlvibnBVrEb.svg" alt="fb icon" style="height:16px; vertical-align:middle; margin-right:8px;">
-                Continue with Facebook
+              <button id="facebookLoginBtn" onclick="facebookLogin()" class="facebook-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" style="margin-right:8px; vertical-align:middle;">
+                  <path fill="#1877F2" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+                <span id="facebookBtnText">Continue with Facebook</span>
               </button>
             </div>
           </div>
@@ -120,16 +122,6 @@
 
     <!-- Facebook SDK & Login -->
     <script>
-      window.fbAsyncInit = function() {
-        FB.init({
-          appId      : '30160999036877836',
-          cookie     : true,
-          xfbml      : true,
-          version    : 'v19.0'
-        });
-        FB.AppEvents.logPageView();
-      };
-
       (function(d, s, id){
          var js, fjs = d.getElementsByTagName(s)[0];
          if (d.getElementById(id)) return;
@@ -139,16 +131,100 @@
       }(document, 'script', 'facebook-jssdk'));
 
       function facebookLogin() {
+        // Disable button and show loading state
+        const fbBtn = document.getElementById('facebookLoginBtn');
+        const fbBtnText = document.getElementById('facebookBtnText');
+        const originalText = fbBtnText.textContent;
+        
+        fbBtn.disabled = true;
+        fbBtnText.textContent = 'Connecting...';
+        
         FB.login(function(response) {
+          // Re-enable button
+          fbBtn.disabled = false;
+          fbBtnText.textContent = originalText;
+          
           if (response.authResponse) {
-            FB.api('/me', {fields: 'name,email'}, function(profile) {
-              alert('Logged in as: ' + profile.name + '\nEmail: ' + profile.email);
+            console.log('Facebook login successful:', response);
+            
+            // Show loading state for user info
+            fbBtnText.textContent = 'Getting profile...';
+            fbBtn.disabled = true;
+            
+            FB.api('/me', {fields: 'name,email,picture'}, function(profile) {
+              fbBtn.disabled = false;
+              fbBtnText.textContent = originalText;
+              
+              console.log('Facebook profile:', profile);
+              
+              // Store user info (you can modify this to save to your backend)
+              localStorage.setItem('facebookUser', JSON.stringify({
+                id: profile.id,
+                name: profile.name,
+                email: profile.email,
+                picture: profile.picture.data.url,
+                loginType: 'facebook'
+              }));
+              
+              // Show success message
+              alert(`Welcome ${profile.name}!\n\nYou have successfully signed in with Facebook.\nEmail: ${profile.email || 'Not provided'}`);
+              
+              // Redirect to main page or dashboard
+              // window.location.href = 'index.html';
             });
           } else {
-            alert('User cancelled login or did not fully authorize.');
+            console.log('Facebook login failed or cancelled:', response);
+            alert('Facebook login was cancelled or failed. Please try again.');
           }
         }, {scope: 'public_profile,email'});
       }
+      
+      // Check if user is already logged in
+      function checkFacebookLoginStatus() {
+        FB.getLoginStatus(function(response) {
+          if (response.status === 'connected') {
+            console.log('User is already logged in to Facebook');
+            // You can auto-populate user info here if needed
+            updateFacebookButtonState(true);
+          }
+        });
+      }
+      
+      // Update button state based on login status
+      function updateFacebookButtonState(isLoggedIn) {
+        const fbBtn = document.getElementById('facebookLoginBtn');
+        const fbBtnText = document.getElementById('facebookBtnText');
+        
+        if (isLoggedIn) {
+          fbBtnText.textContent = 'Logout from Facebook';
+          fbBtn.onclick = facebookLogout;
+        } else {
+          fbBtnText.textContent = 'Continue with Facebook';
+          fbBtn.onclick = facebookLogin;
+        }
+      }
+      
+      // Facebook logout function
+      function facebookLogout() {
+        FB.logout(function(response) {
+          console.log('Facebook logout:', response);
+          localStorage.removeItem('facebookUser');
+          updateFacebookButtonState(false);
+          alert('You have been logged out from Facebook.');
+        });
+      }
+      
+      // Call this after FB SDK is loaded
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '30160999036877836',
+          cookie     : true,
+          xfbml      : true,
+          version    : 'v19.0'
+        });
+        FB.AppEvents.logPageView();
+        checkFacebookLoginStatus();
+      };
     </script>
 
     <!-- Google Sign-In Init -->
