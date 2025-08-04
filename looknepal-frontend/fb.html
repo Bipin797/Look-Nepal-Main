@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Facebook Login Example</title>
+  </head>
+  <body>
+    <h2>Facebook Login Demo</h2>
+    <div id="status"></div>
+    <button onclick="checkLoginState()">Login with Facebook</button>
+
+    <!-- Load the Facebook SDK -->
+    <script>
+      window.fbAsyncInit = function () {
+        FB.init({
+          appId: "30160999036877836", // Replace with your real App ID
+          cookie: true,
+          xfbml: true,
+          version: "v19.0", // Use latest version available
+        });
+
+        FB.getLoginStatus(function (response) {
+          statusChangeCallback(response);
+        });
+      };
+
+      // Load SDK asynchronously
+      (function (d, s, id) {
+        var js,
+          fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      })(document, "script", "facebook-jssdk");
+
+      // Called when login status changes
+      function statusChangeCallback(response) {
+        if (response.status === "connected") {
+          FB.api("/me", function (userData) {
+            document.getElementById("status").innerHTML =
+              "Logged in as: " + userData.name;
+          });
+        } else {
+          document.getElementById("status").innerHTML = "Not logged in.";
+        }
+      }
+
+      function checkLoginState() {
+        FB.login(
+          function (response) {
+            statusChangeCallback(response);
+          },
+          { scope: "public_profile,email" }
+        );
+      }
+    </script>
+  </body>
+</html>
