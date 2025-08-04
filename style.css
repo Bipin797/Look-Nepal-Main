@@ -426,11 +426,15 @@ footer {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 10px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: bold;
 }
 
 .facebook-icon {
-  font-size: 1.5rem;
-  align-self: flex-start;
+  font-size: 1.2rem;
+  color: #4267B2;
+  margin-right: 8px;
 }
 
 .email-address-input {
@@ -445,4 +449,24 @@ footer {
   border: 0.5px solid grey;
   border-radius: 5px;
   color: white;
+}
+
+/* Card Actions */
+.card-actions {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+.card-actions .apply-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+.card-actions .bookmark-btn {
+  padding: 8px 12px;
+  font-size: 14px;
 }

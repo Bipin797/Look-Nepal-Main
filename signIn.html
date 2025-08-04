@@ -36,6 +36,8 @@
     ></script>
     <!-- Google Sign-In SDK -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Facebook SDK -->
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
   </head>
   <body style="background-color: #f6f5f2">
     <div>
@@ -70,9 +72,11 @@
 
             <!-- SIGN IN WITH FACEBOOK -->
             <div class="sign-in-div">
-              <button onclick="facebookLogin()" style="width:100%; padding:10px;">
-                <img src="https://static.xx.fbcdn.net/rsrc.php/yd/r/hlvibnBVrEb.svg" alt="fb icon" style="height:16px; vertical-align:middle; margin-right:8px;">
-                Continue with Facebook
+              <button class="sign-in-fb" onclick="facebookLogin()">
+                <div>
+                  <i class="fa-brands fa-facebook facebook-icon"></i>
+                </div>
+                <div class="continue-text">Continue with Facebook</div>
               </button>
             </div>
           </div>
