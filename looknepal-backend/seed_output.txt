@@ -1,0 +1,67 @@
+(node:98331) [MONGOOSE] Warning: Duplicate schema index on {"email":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:98331) [MONGOOSE] Warning: Duplicate schema index on {"name":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(node:98331) [MONGOOSE] Warning: Duplicate schema index on {"slug":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+MongoDB Connected
+Data Cleared
+Employers Created
+Companies Created
+Error seeding database: MongoBulkWriteError: E11000 duplicate key error collection: looknepal.jobs index: slug_1 dup key: { slug: null }
+    at OrderedBulkOperation.handleWriteError (/Users/bipin/LookNepal/looknepal-backend/node_modules/mongodb/lib/bulk/common.js:817:19)
+    at executeCommands (/Users/bipin/LookNepal/looknepal-backend/node_modules/mongodb/lib/bulk/common.js:346:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async BulkWriteShimOperation.execute (/Users/bipin/LookNepal/looknepal-backend/node_modules/mongodb/lib/bulk/common.js:521:16)
+    at async tryOperation (/Users/bipin/LookNepal/looknepal-backend/node_modules/mongodb/lib/operations/execute_operation.js:207:20)
+    at async executeOperation (/Users/bipin/LookNepal/looknepal-backend/node_modules/mongodb/lib/operations/execute_operation.js:75:16)
+    at async OrderedBulkOperation.execute (/Users/bipin/LookNepal/looknepal-backend/node_modules/mongodb/lib/bulk/common.js:806:16)
+    at async BulkWriteOperation.execute (/Users/bipin/LookNepal/looknepal-backend/node_modules/mongodb/lib/operations/bulk_write.js:34:16)
+    at async InsertManyOperation.execute (/Users/bipin/LookNepal/looknepal-backend/node_modules/mongodb/lib/operations/insert.js:82:25)
+    at async tryOperation (/Users/bipin/LookNepal/looknepal-backend/node_modules/mongodb/lib/operations/execute_operation.js:207:20) {
+  errorLabelSet: Set(0) {},
+  errorResponse: {
+    message: 'E11000 duplicate key error collection: looknepal.jobs index: slug_1 dup key: { slug: null }',
+    code: 11000,
+    writeErrors: [ [Object] ]
+  },
+  code: 11000,
+  writeErrors: [ { err: [Object], index: 1 } ],
+  result: BulkWriteResult {
+    insertedCount: 1,
+    matchedCount: 0,
+    modifiedCount: 0,
+    deletedCount: 0,
+    upsertedCount: 0,
+    upsertedIds: {},
+    insertedIds: { '0': new ObjectId('69296dc6a8295c1a8e002701') }
+  },
+  insertedDocs: [
+    {
+      title: 'Senior Full Stack Developer',
+      description: 'We are looking for an experienced Full Stack Developer to join our core team. You will be responsible for building scalable web applications using MERN stack.',
+      requirements: 'Minimum 5 years of experience with Node.js and React. Strong understanding of database design and API development.',
+      responsibilities: 'Lead the development of new features. Mentor junior developers. Code review and optimization.',
+      jobType: 'full-time',
+      category: 'Technology',
+      experienceLevel: 'senior',
+      salary: [Object],
+      location: [Object],
+      company: new ObjectId('69296dc6a8295c1a8e0026f7'),
+      postedBy: new ObjectId('69296dc5a8295c1a8e0026e7'),
+      requiredSkills: [Array],
+      preferredSkills: [],
+      benefits: [Array],
+      applicationDeadline: 2025-12-28T09:39:18.401Z,
+      applicationMethod: 'platform',
+      status: 'active',
+      isUrgent: false,
+      isFeatured: false,
+      stats: [Object],
+      tags: [],
+      boost: [Object],
+      _id: new ObjectId('69296dc6a8295c1a8e002701'),
+      __v: 0,
+      createdAt: 2025-11-28T09:39:18.405Z,
+      updatedAt: 2025-11-28T09:39:18.405Z
+    }
+  ]
+}

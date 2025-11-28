@@ -9,7 +9,18 @@ require('dotenv').config(); // Loads environment variables from a .env file
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors'); // Handles Cross-Origin Resource Sharing
-const Post = require('./models/postModels'); // Imports the Mongoose model for Posts
+
+// Import Models
+const User = require('./models/User');
+const Company = require('./models/Company');
+const Job = require('./models/Job');
+const Application = require('./models/Application');
+
+// Import Routes
+const authRoutes = require('./routes/auth');
+const jobRoutes = require('./routes/jobs');
+const companyRoutes = require('./routes/companies');
+const applicationRoutes = require('./routes/applications');
 
 // =================================================================
 //                      2. APP CONFIGURATION
@@ -32,6 +43,9 @@ app.use(cors());
 // for POST and PUT requests.
 app.use(express.json());
 
+// Serve static files for uploads
+app.use('/uploads', express.static('uploads'));
+
 // =================================================================
 //                      4. DATABASE CONNECTION
 // =================================================================
@@ -49,52 +63,11 @@ mongoose.connect(process.env.MONGO_URI)
 // =================================================================
 // These are the endpoints your frontend will interact with.
 
-/**
- * @route   POST /api/posts
- * @desc    Create a new post
- * @access  Public
- */
-app.post('/api/posts', async (req, res) => {
-  try {
-    // Create a new post instance using the data from the request body
-    const newPost = new Post({
-      title: req.body.title,
-      content: req.body.content,
-      author: req.body.author,
-    });
-
-    // Save the new post to the database
-    const savedPost = await newPost.save();
-
-    // Respond with a 201 (Created) status and the saved post data
-    res.status(201).json(savedPost);
-  } catch (error) {
-    // If an error occurs, log it to the console for debugging
-    console.error("Error in POST /api/posts:", error);
-    // Respond with a 500 (Internal Server Error) status and an error message
-    res.status(500).json({ message: 'Error creating post', error: error.message });
-  }
-});
-
-/**
- * @route   GET /api/posts
- * @desc    Get all posts
- * @access  Public
- */
-app.get('/api/posts', async (req, res) => {
-  try {
-    // Find all documents in the 'posts' collection
-    const posts = await Post.find().sort({ createdAt: -1 }); // Sort by newest first
-    
-    // Respond with a 200 (OK) status and the array of posts
-    res.status(200).json(posts);
-  } catch (error) {
-    // If an error occurs, log it to the console for debugging
-    console.error("Error in GET /api/posts:", error);
-    // Respond with a 500 (Internal Server Error) status and an error message
-    res.status(500).json({ message: 'Error fetching posts', error: error.message });
-  }
-});
+// Route modules
+app.use('/api/auth', authRoutes);
+app.use('/api/jobs', jobRoutes);
+app.use('/api/companies', companyRoutes);
+app.use('/api/applications', applicationRoutes);
 
 /**
  * @route   GET /

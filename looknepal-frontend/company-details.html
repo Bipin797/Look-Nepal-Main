@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Company Details | Look Nepal</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet" />
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous" />
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css" />
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/faed8028ee.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="nav-div">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/index.html">Look Nepal</a>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/index.html">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="companies.html">Company Reviews</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="salary.html">Search Salary</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <hr />
+
+    <div class="container mt-5 mb-5" id="companyContent">
+        <!-- Loading State -->
+        <div class="text-center py-5">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p>Loading company details...</p>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const slug = urlParams.get('slug');
+
+            if (!slug) {
+                document.getElementById('companyContent').innerHTML = '<div class="alert alert-danger">No company specified.</div>';
+                return;
+            }
+
+            try {
+                // Fetch company details and jobs
+                const [companyRes, jobsRes] = await Promise.all([
+                    LookNepal.apiCall(`/companies/${slug}`),
+                    LookNepal.apiCall(`/companies/${slug}/jobs`)
+                ]);
+
+                const company = companyRes.company;
+                const jobs = jobsRes.jobs;
+
+                document.getElementById('companyContent').innerHTML = `
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="bg-light rounded p-3 me-4" style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fa-solid fa-building fa-3x text-secondary"></i>
+                                </div>
+                                <div>
+                                    <h1 class="mb-1">${company.name}</h1>
+                                    <p class="text-muted mb-2">${company.industry} • ${company.address.city}</p>
+                                    <div class="text-warning">
+                                        <i class="fa-solid fa-star"></i> ${company.rating ? company.rating.overall : 'N/A'} Rating
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-5">
+                                <h3>About</h3>
+                                <p>${company.description}</p>
+                            </div>
+
+                            <div class="mb-5">
+                                <h3>Open Jobs (${jobs.length})</h3>
+                                <div class="list-group">
+                                    ${jobs.length > 0 ? jobs.map(job => `
+                                        <a href="job-details.html?id=${job._id}" class="list-group-item list-group-item-action p-3">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h5 class="mb-1">${job.title}</h5>
+                                                <small>${new Date(job.createdAt).toLocaleDateString()}</small>
+                                            </div>
+                                            <p class="mb-1">${job.location.city}</p>
+                                            <small class="text-muted">${job.jobType}</small>
+                                        </a>
+                                    `).join('') : '<p>No active job openings.</p>'}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="card shadow-sm mb-4">
+                                <div class="card-body">
+                                    <h5 class="card-title">Company Info</h5>
+                                    <ul class="list-unstyled mt-3">
+                                        <li class="mb-2"><strong>Size:</strong> ${company.companySize} employees</li>
+                                        <li class="mb-2"><strong>Founded:</strong> ${company.foundedYear || 'N/A'}</li>
+                                        <li class="mb-2"><strong>Website:</strong> <a href="${company.website}" target="_blank">${company.website || 'N/A'}</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+            } catch (error) {
+                document.getElementById('companyContent').innerHTML = `<div class="alert alert-danger">Error loading company: ${error.message}</div>`;
+            }
+        });
+    </script>
+</body>
+
+</html>

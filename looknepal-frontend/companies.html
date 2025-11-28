@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Company Reviews | Look Nepal</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet" />
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous" />
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css" />
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/faed8028ee.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="nav-div">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/index.html">Look Nepal</a>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/index.html">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="companies.html">Company Reviews</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="salary.html">Search Salary</a>
+                        </li>
+                    </ul>
+                    <div class="right-nav-section">
+                        <div><a href="signIn.html" style="color: #0e46a3; font-weight: 600">Sign In</a></div>
+                        <div class="vrt-line"></div>
+                        <div><a href="employer-landing.html">Employers / Post Jobs</a></div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <hr />
+
+    <div class="container mt-5">
+        <h1 class="mb-4">Find great places to work</h1>
+
+        <div class="search-box mb-5" style="max-width: 800px;">
+            <div class="text-search w-100">
+                <input type="text" id="companySearch" placeholder="Company name or keyword"
+                    class="border-0 shadow-none w-100 p-2">
+            </div>
+            <div class="search-button-div">
+                <button type="button" class="search-button" onclick="searchCompanies()">Search</button>
+            </div>
+        </div>
+
+        <h3 class="mb-4">Popular Companies</h3>
+        <div class="row" id="companiesList">
+            <!-- Loading State -->
+            <div class="text-center py-5 w-100">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p>Loading companies...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            searchCompanies();
+        });
+
+        async function searchCompanies() {
+            const query = document.getElementById('companySearch').value;
+            const container = document.getElementById('companiesList');
+
+            try {
+                const params = new URLSearchParams();
+                if (query) params.append('search', query);
+
+                const data = await LookNepal.apiCall(`/companies?${params.toString()}`);
+
+                if (data.companies.length === 0) {
+                    container.innerHTML = '<div class="col-12 text-center">No companies found.</div>';
+                    return;
+                }
+
+                container.innerHTML = data.companies.map(company => `
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 shadow-sm" onclick="window.location.href='company-details.html?slug=${company.slug}'" style="cursor: pointer;">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="bg-light rounded p-2 me-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fa-solid fa-building fa-2x text-secondary"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="card-title mb-0">${company.name}</h5>
+                                        <small class="text-muted">${company.industry}</small>
+                                    </div>
+                                </div>
+                                <p class="card-text text-truncate" style="max-height: 3em;">${company.description}</p>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <span class="text-warning">
+                                        <i class="fa-solid fa-star"></i> ${company.rating ? company.rating.overall : 'N/A'}
+                                    </span>
+                                    <span class="text-primary">${company.stats ? company.stats.activeJobs : 0} jobs</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                container.innerHTML = `<div class="col-12 alert alert-danger">Error loading companies: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+
+</html>

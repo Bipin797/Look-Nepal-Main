@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Job Details | Look Nepal</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet" />
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous" />
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css" />
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/faed8028ee.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="nav-div">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/index.html">Look Nepal</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/index.html">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Company Reviews</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Search Salary</a>
+                        </li>
+                    </ul>
+                    <div class="right-nav-section">
+                        <div>
+                            <a href="signIn.html" style="color: #0e46a3; font-weight: 600">Sign In</a>
+                        </div>
+                        <div class="vrt-line"></div>
+                        <div><a href="">Employers / Post Jobs</a></div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <hr />
+
+    <div class="container mt-5 mb-5">
+        <div id="jobDetailsContent" class="row justify-content-center">
+            <!-- Loading State -->
+            <div class="text-center py-5">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p>Loading job details...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <footer class="global-footer">
+            <ul class="footer-top">
+                <li><a href="">Hiring Lab</a></li>
+                <li><a href="">Career Advice</a></li>
+                <li><a href="">Browse Jobs</a></li>
+                <li><a href="">Browse Companies</a></li>
+                <li><a href="">Salaries</a></li>
+                <li><a href="">Work at Look Nepal</a></li>
+                <li><a href="">Locations</a></li>
+                <li><a href="">About</a></li>
+                <li><a href="">Help Centre</a></li>
+                <li><a href="">ESG at Look Nepal</a></li>
+                <li><a href="">Post a job</a></li>
+            </ul>
+            <br />
+            <ul class="footer-down">
+                <li>2024 Look Nepal</li>
+                <li>Accessiblity at Look Nepal</li>
+                <li>Privacy Centre and Ad Choices</li>
+                <li>Terms</li>
+            </ul>
+        </footer>
+    </div>
+
+    <!-- Main JavaScript -->
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const jobId = urlParams.get('id');
+
+            if (!jobId) {
+                document.getElementById('jobDetailsContent').innerHTML = `
+                    <div class="alert alert-danger">No job ID provided.</div>
+                `;
+                return;
+            }
+
+            try {
+                const data = await LookNepal.apiCall(`/jobs/${jobId}`);
+                const job = data.job;
+
+                const salary = job.salary ?
+                    `Rs.${job.salary.min.toLocaleString()} - Rs.${job.salary.max.toLocaleString()} a month` :
+                    'Salary not specified';
+
+                const company = job.company || {};
+                const location = job.location ? `${job.location.city}, ${job.location.country}` : 'Location not specified';
+                const postedDate = new Date(job.createdAt).toLocaleDateString();
+
+                const content = `
+                    <div class="col-12 col-md-10 col-lg-8">
+                        <div class="card shadow-sm">
+                            <div class="card-body p-4">
+                                <h2 class="card-title mb-3">${job.title}</h2>
+                                <div class="mb-3">
+                                    <a href="#" class="text-decoration-none fw-bold text-dark">${company.name || 'Company Name'}</a>
+                                    <span class="mx-2">•</span>
+                                    <span class="text-muted">${location}</span>
+                                </div>
+                                
+                                <div class="job-tags mb-4">
+                                    <span class="badge bg-light text-dark border me-2">${job.jobType}</span>
+                                    <span class="badge bg-light text-dark border me-2">${salary}</span>
+                                    ${job.location && job.location.isRemote ? '<span class="badge bg-success me-2">Remote</span>' : ''}
+                                </div>
+
+                                <div class="mb-4">
+                                    <button class="btn btn-primary btn-lg px-5" onclick="applyForJob('${job._id}')">Apply Now</button>
+                                    <button class="btn btn-outline-secondary btn-lg ms-2"><i class="fa-regular fa-bookmark"></i></button>
+                                </div>
+
+                                <hr>
+
+                                <div class="job-description mt-4">
+                                    <h5 class="mb-3">Job Description</h5>
+                                    <p>${job.description}</p>
+                                    
+                                    <h5 class="mb-3 mt-4">Requirements</h5>
+                                    <p>${job.requirements}</p>
+
+                                    ${job.responsibilities ? `
+                                        <h5 class="mb-3 mt-4">Responsibilities</h5>
+                                        <p>${job.responsibilities}</p>
+                                    ` : ''}
+                                    
+                                    ${job.benefits ? `
+                                        <h5 class="mb-3 mt-4">Benefits</h5>
+                                        <p>${job.benefits}</p>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('jobDetailsContent').innerHTML = content;
+
+            } catch (error) {
+                document.getElementById('jobDetailsContent').innerHTML = `
+                    <div class="alert alert-danger">Error loading job details: ${error.message}</div>
+                `;
+            }
+        });
+
+        function applyForJob(jobId) {
+            if (!LookNepal.currentUser()) {
+                // Save return URL and redirect to login
+                sessionStorage.setItem('returnUrl', window.location.href);
+                window.location.href = 'signIn.html';
+                return;
+            }
+            // TODO: Implement application modal/flow
+            alert('Application flow coming soon!');
+        }
+    </script>
+</body>
+
+</html>
