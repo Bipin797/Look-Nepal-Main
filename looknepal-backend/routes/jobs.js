@@ -23,25 +23,66 @@ const validateJobCreation = [
 ];
 
 /**
+ * @route   GET /api/jobs/suggestions
+ * @desc    Get autocomplete suggestions for job matching keyword
+ * @access  Public
+ */
+router.get('/suggestions', async (req, res) => {
+  try {
+    const { q } = req.query;
+    if (!q || q.length < 2) {
+      return res.json([]);
+    }
+
+    const suggestions = await Job.find({
+      status: 'active',
+      $or: [
+        { title: { $regex: q, $options: 'i' } },
+        { 'company.name': { $regex: q, $options: 'i' } } // Need to populate or search differently if company is an ObjectId
+      ]
+    })
+      .select('title company')
+      .populate('company', 'name')
+      .limit(5)
+      .lean();
+
+    // Map to simple array of objects
+    const formatted = suggestions.map(job => ({
+      _id: job._id,
+      title: job.title,
+      company: job.company ? job.company.name : 'Unknown Company'
+    }));
+
+    res.json(formatted);
+  } catch (error) {
+    console.error('Error fetching job suggestions:', error);
+    res.status(500).json({ message: 'Server error fetching suggestions' });
+  }
+});
+
+/**
  * @route   GET /api/jobs
  * @desc    Get all public jobs with filtering and pagination
  * @access  Public
  */
 router.get('/', async (req, res) => {
   try {
-    const { 
-      keyword, 
-      location, 
-      type, 
-      category, 
+    const {
+      keyword,
+      location,
+      type,
+      category,
       experience,
-      page = 1, 
-      limit = 10 
+      minSalary,
+      remoteSetting,
+      company,
+      page = 1,
+      limit = 10
     } = req.query;
-    
+
     // Build filter object
     let filters = { status: 'active' }; // Only show active jobs
-    
+
     // Keyword search (title or description)
     if (keyword) {
       filters.$or = [
@@ -71,11 +112,25 @@ router.get('/', async (req, res) => {
       filters.experienceLevel = experience;
     }
 
+    // Minimum Salary filter
+    if (minSalary) {
+      filters['salary.min'] = { $gte: parseInt(minSalary) };
+    }
+
+    // Remote Filter
+    if (remoteSetting) {
+      if (remoteSetting === 'remote') {
+        filters['location.isRemote'] = true;
+      } else if (remoteSetting === 'on-site' || remoteSetting === 'hybrid') {
+        filters['location.isRemote'] = false;
+      }
+    }
+
     // Don't show expired jobs
     filters.applicationDeadline = { $gte: new Date() };
 
     const skip = (page - 1) * limit;
-    
+
     const jobs = await Job.find(filters)
       .populate('company', 'name logo slug industry')
       .select('-applications -applicationEmail -externalApplicationUrl') // Exclude sensitive/unnecessary fields for list view
@@ -114,7 +169,7 @@ router.get('/:id', async (req, res) => {
     const job = await Job.findById(req.params.id)
       .populate('company', 'name logo slug industry description website location')
       .populate('postedBy', 'firstName lastName'); // Optional: show recruiter name? Maybe not for public.
-    
+
     if (!job) {
       return res.status(404).json({
         message: 'Job not found'
@@ -125,7 +180,7 @@ router.get('/:id', async (req, res) => {
     // For simplicity, we'll just return it, but frontend should handle "closed" status visually.
     // Or we can restrict:
     // if (job.status !== 'active') { ... } 
-    
+
     // Increment view count (simple implementation)
     // await Job.findByIdAndUpdate(req.params.id, { $inc: { views: 1 } });
 
@@ -262,14 +317,14 @@ router.post('/', authenticate, authorize('employer'), validateJobCreation, async
 router.get('/my-jobs', authenticate, authorize('employer'), async (req, res) => {
   try {
     const { status, page = 1, limit = 10 } = req.query;
-    
+
     let filters = { postedBy: req.user._id };
     if (status) {
       filters.status = status;
     }
 
     const skip = (page - 1) * limit;
-    
+
     const jobs = await Job.find(filters)
       .populate('company', 'name logo slug')
       .sort({ createdAt: -1 })
@@ -322,7 +377,7 @@ router.put('/:id', authenticate, authorize('employer'), [
     }
 
     const job = await Job.findById(req.params.id);
-    
+
     if (!job) {
       return res.status(404).json({
         message: 'Job not found'
@@ -389,7 +444,7 @@ router.put('/:id', authenticate, authorize('employer'), [
 router.delete('/:id', authenticate, authorize('employer'), async (req, res) => {
   try {
     const job = await Job.findById(req.params.id);
-    
+
     if (!job) {
       return res.status(404).json({
         message: 'Job not found'
@@ -435,7 +490,7 @@ router.delete('/:id', authenticate, authorize('employer'), async (req, res) => {
 router.post('/:id/toggle-status', authenticate, authorize('employer'), async (req, res) => {
   try {
     const job = await Job.findById(req.params.id);
-    
+
     if (!job) {
       return res.status(404).json({
         message: 'Job not found'
@@ -451,7 +506,7 @@ router.post('/:id/toggle-status', authenticate, authorize('employer'), async (re
 
     // Toggle between active and paused
     const newStatus = job.status === 'active' ? 'paused' : 'active';
-    
+
     // Don't allow reactivation of expired jobs
     if (job.isExpired() && newStatus === 'active') {
       return res.status(400).json({

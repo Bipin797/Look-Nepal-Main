@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | Look Nepal</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/faed8028ee.js" crossorigin="anonymous"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+
+    <!-- Navbar (To be injected or copied) -->
+    <div class="nav-div bg-white">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold" href="index.html">Look Nepal</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="my-applications.html">My Applications</a></li>
+                    </ul>
+                    <div class="d-flex align-items-center gap-3">
+                        <span id="userGreeting" class="fw-semibold"></span>
+                        <button onclick="LookNepal.logout()"
+                            class="btn btn-outline-danger btn-sm rounded-pill">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <hr class="m-0">
+
+    <div class="container my-5 flex-grow-1 d-flex flex-column justify-content-center">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <!-- Profile Card -->
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4 p-md-5">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2 class="card-title fw-bold m-0">My Profile</h2>
+                            <button id="editProfileBtn" class="btn btn-outline-primary rounded-pill px-4"
+                                onclick="toggleEditMode()">
+                                <i class="fa-solid fa-pen me-2"></i>Edit
+                            </button>
+                        </div>
+
+                        <!-- User Info Display/Form -->
+                        <form id="profileForm">
+                            <div class="mb-3">
+                                <label for="fullName" class="form-label fw-bold text-muted small text-uppercase">Full
+                                    Name</label>
+                                <input type="text" class="form-control form-control-lg" id="fullName" disabled required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label fw-bold text-muted small text-uppercase">Email
+                                    Address</label>
+                                <input type="email" class="form-control form-control-lg bg-light" id="email" disabled
+                                    readonly>
+                                <div class="form-text">Email cannot be changed.</div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="phone" class="form-label fw-bold text-muted small text-uppercase">Phone
+                                    Number</label>
+                                <input type="tel" class="form-control form-control-lg" id="phone" disabled>
+                            </div>
+
+                            <div id="editActions" class="d-none d-flex gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5">Save
+                                    Changes</button>
+                                <button type="button" class="btn btn-light btn-lg rounded-pill px-4"
+                                    onclick="toggleEditMode()">Cancel</button>
+                            </div>
+                        </form>
+
+                        <hr class="my-5">
+
+                        <!-- Work Experience Section -->
+                        <div class="mb-5">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4 class="fw-bold m-0">Work Experience</h4>
+                                <button class="btn btn-outline-primary rounded-pill btn-sm"
+                                    onclick="window.LookNepalProfile.toggleWorkExpForm()">
+                                    <i class="fa-solid fa-plus me-1"></i>Add
+                                </button>
+                            </div>
+                            <div id="workExperienceList" class="d-flex flex-column gap-3 mb-3">
+                                <!-- Cards injected here -->
+                            </div>
+
+                            <!-- Add/Edit form -->
+                            <div id="workExpFormContainer" class="d-none bg-light p-4 rounded-4 border">
+                                <h5 class="fw-bold mb-3" id="workExpFormTitle">Add Experience</h5>
+                                <form id="workExpForm">
+                                    <input type="hidden" id="workExpIndex" value="-1">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold small text-muted">Job Title*</label>
+                                        <input type="text" class="form-control" id="workExpTitle" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold small text-muted">Company*</label>
+                                        <input type="text" class="form-control" id="workExpCompany" required>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-6">
+                                            <label class="form-label fw-bold small text-muted">Start Date</label>
+                                            <input type="month" class="form-control" id="workExpStart">
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label fw-bold small text-muted">End Date</label>
+                                            <input type="month" class="form-control" id="workExpEnd">
+                                        </div>
+                                    </div>
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="workExpCurrent">
+                                        <label class="form-check-label text-muted" for="workExpCurrent">
+                                            I currently work here
+                                        </label>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label fw-bold small text-muted">Description</label>
+                                        <textarea class="form-control" id="workExpDesc" rows="3"></textarea>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button type="button" class="btn btn-primary rounded-pill px-4"
+                                            onclick="window.LookNepalProfile.saveWorkExp()">Save</button>
+                                        <button type="button" class="btn btn-light rounded-pill px-4"
+                                            onclick="window.LookNepalProfile.toggleWorkExpForm()">Cancel</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <hr class="my-5">
+
+                        <!-- Education Section -->
+                        <div class="mb-5">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4 class="fw-bold m-0">Education</h4>
+                                <button class="btn btn-outline-primary rounded-pill btn-sm"
+                                    onclick="window.LookNepalProfile.toggleEduForm()">
+                                    <i class="fa-solid fa-plus me-1"></i>Add
+                                </button>
+                            </div>
+                            <div id="educationList" class="d-flex flex-column gap-3 mb-3">
+                                <!-- Cards injected here -->
+                            </div>
+
+                            <!-- Add/Edit form -->
+                            <div id="eduFormContainer" class="d-none bg-light p-4 rounded-4 border">
+                                <h5 class="fw-bold mb-3" id="eduFormTitle">Add Education</h5>
+                                <form id="eduForm">
+                                    <input type="hidden" id="eduIndex" value="-1">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold small text-muted">Degree*</label>
+                                        <input type="text" class="form-control" id="eduDegree"
+                                            placeholder="e.g. Bachelor of Science" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold small text-muted">Institution*</label>
+                                        <input type="text" class="form-control" id="eduInst" required>
+                                    </div>
+                                    <div class="row mb-4">
+                                        <div class="col-6">
+                                            <label class="form-label fw-bold small text-muted">Field of Study</label>
+                                            <input type="text" class="form-control" id="eduField">
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label fw-bold small text-muted">Graduation Year</label>
+                                            <input type="number" class="form-control" id="eduYear" min="1900"
+                                                max="2099">
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button type="button" class="btn btn-primary rounded-pill px-4"
+                                            onclick="window.LookNepalProfile.saveEdu()">Save</button>
+                                        <button type="button" class="btn btn-light rounded-pill px-4"
+                                            onclick="window.LookNepalProfile.toggleEduForm()">Cancel</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer mt-auto">
+        <footer class="global-footer text-center py-4 bg-light">
+            <p class="text-muted small mb-0">&copy; 2024 Look Nepal</p>
+        </footer>
+    </div>
+
+    <!-- Main JS -->
+    <script src="js/main.js"></script>
+    <script>
+        let currentUserData = null;
+
+        window.LookNepalProfile = {
+            toggleWorkExpForm: function () {
+                const formContainer = document.getElementById('workExpFormContainer');
+                if (formContainer.classList.contains('d-none')) {
+                    document.getElementById('workExpForm').reset();
+                    document.getElementById('workExpIndex').value = '-1';
+                    document.getElementById('workExpFormTitle').textContent = 'Add Experience';
+                    formContainer.classList.remove('d-none');
+                } else {
+                    formContainer.classList.add('d-none');
+                }
+            },
+            saveWorkExp: async function () {
+                const index = parseInt(document.getElementById('workExpIndex').value);
+                const exp = {
+                    title: document.getElementById('workExpTitle').value,
+                    company: document.getElementById('workExpCompany').value,
+                    startDate: document.getElementById('workExpStart').value,
+                    endDate: document.getElementById('workExpEnd').value,
+                    isCurrentRole: document.getElementById('workExpCurrent').checked,
+                    description: document.getElementById('workExpDesc').value
+                };
+
+                if (!exp.title || !exp.company) {
+                    alert('Title and Company are required.');
+                    return;
+                }
+
+                let workExperience = currentUserData.workExperience || [];
+                if (index >= 0) {
+                    workExperience[index] = exp;
+                } else {
+                    workExperience.push(exp);
+                }
+
+                try {
+                    const updatedUser = await window.LookNepal.apiCall('/auth/profile', {
+                        method: 'PUT',
+                        body: JSON.stringify({ workExperience })
+                    });
+                    currentUserData = updatedUser;
+                    window.LookNepal.setCurrentUser(updatedUser);
+                    renderWorkExperience(updatedUser.workExperience);
+                    this.toggleWorkExpForm();
+                } catch (e) {
+                    alert('Error saving experience');
+                    console.error(e);
+                }
+            },
+            deleteWorkExp: async function (index) {
+                if (!confirm('Delete this experience?')) return;
+                let workExperience = currentUserData.workExperience || [];
+                workExperience.splice(index, 1);
+
+                try {
+                    const updatedUser = await window.LookNepal.apiCall('/auth/profile', {
+                        method: 'PUT',
+                        body: JSON.stringify({ workExperience })
+                    });
+                    currentUserData = updatedUser;
+                    window.LookNepal.setCurrentUser(updatedUser);
+                    renderWorkExperience(updatedUser.workExperience);
+                } catch (e) {
+                    alert('Error deleting experience');
+                    console.error(e);
+                }
+            },
+            toggleEduForm: function () {
+                const formContainer = document.getElementById('eduFormContainer');
+                if (formContainer.classList.contains('d-none')) {
+                    document.getElementById('eduForm').reset();
+                    document.getElementById('eduIndex').value = '-1';
+                    document.getElementById('eduFormTitle').textContent = 'Add Education';
+                    formContainer.classList.remove('d-none');
+                } else {
+                    formContainer.classList.add('d-none');
+                }
+            },
+            saveEdu: async function () {
+                const index = parseInt(document.getElementById('eduIndex').value);
+                const edu = {
+                    degree: document.getElementById('eduDegree').value,
+                    institution: document.getElementById('eduInst').value,
+                    fieldOfStudy: document.getElementById('eduField').value,
+                    graduationYear: document.getElementById('eduYear').value ? parseInt(document.getElementById('eduYear').value) : null
+                };
+
+                if (!edu.degree || !edu.institution) {
+                    alert('Degree and Institution are required.');
+                    return;
+                }
+
+                let education = currentUserData.education || [];
+                if (index >= 0) {
+                    education[index] = edu;
+                } else {
+                    education.push(edu);
+                }
+
+                try {
+                    const updatedUser = await window.LookNepal.apiCall('/auth/profile', {
+                        method: 'PUT',
+                        body: JSON.stringify({ education })
+                    });
+                    currentUserData = updatedUser;
+                    window.LookNepal.setCurrentUser(updatedUser);
+                    renderEducation(updatedUser.education);
+                    this.toggleEduForm();
+                } catch (e) {
+                    alert('Error saving education');
+                    console.error(e);
+                }
+            },
+            deleteEdu: async function (index) {
+                if (!confirm('Delete this education?')) return;
+                let education = currentUserData.education || [];
+                education.splice(index, 1);
+
+                try {
+                    const updatedUser = await window.LookNepal.apiCall('/auth/profile', {
+                        method: 'PUT',
+                        body: JSON.stringify({ education })
+                    });
+                    currentUserData = updatedUser;
+                    window.LookNepal.setCurrentUser(updatedUser);
+                    renderEducation(updatedUser.education);
+                } catch (e) {
+                    alert('Error deleting education');
+                    console.error(e);
+                }
+            }
+        };
+
+        function renderWorkExperience(workExperience = []) {
+            const list = document.getElementById('workExperienceList');
+            if (workExperience.length === 0) {
+                list.innerHTML = `<div class="p-3 text-center bg-light rounded-3 border border-dashed"><p class="text-muted small mb-0">No work experience added yet.</p></div>`;
+                return;
+            }
+            list.innerHTML = workExperience.map((exp, index) => {
+                const start = exp.startDate ? new Date(exp.startDate).toLocaleDateString(undefined, { year: 'numeric', month: 'short' }) : '';
+                const end = exp.isCurrentRole ? 'Present' : (exp.endDate ? new Date(exp.endDate).toLocaleDateString(undefined, { year: 'numeric', month: 'short' }) : '');
+                const dateStr = start || end ? `${start} - ${end}` : '';
+                return `
+                <div class="card border border-light shadow-sm rounded-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="fw-bold mb-1">${exp.title}</h6>
+                                <p class="mb-1 text-muted small"><i class="fa-regular fa-building me-1"></i>${exp.company}</p>
+                                ${dateStr ? `<p class="mb-2 text-muted small" style="font-size: 0.8rem;">${dateStr}</p>` : ''}
+                                ${exp.description ? `<p class="small mb-0 text-dark">${exp.description}</p>` : ''}
+                            </div>
+                            <button class="btn btn-outline-danger btn-sm rounded-circle" onclick="window.LookNepalProfile.deleteWorkExp(${index})"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            }).join('');
+        }
+
+        function renderEducation(education = []) {
+            const list = document.getElementById('educationList');
+            if (education.length === 0) {
+                list.innerHTML = `<div class="p-3 text-center bg-light rounded-3 border border-dashed"><p class="text-muted small mb-0">No education added yet.</p></div>`;
+                return;
+            }
+            list.innerHTML = education.map((edu, index) => `
+                <div class="card border border-light shadow-sm rounded-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="fw-bold mb-1">${edu.degree}</h6>
+                                <p class="mb-1 text-muted small"><i class="fa-solid fa-building-columns me-1"></i>${edu.institution}</p>
+                                <p class="mb-0 text-muted small" style="font-size: 0.8rem;">
+                                    ${edu.fieldOfStudy ? edu.fieldOfStudy + ' • ' : ''}
+                                    ${edu.graduationYear ? 'Class of ' + edu.graduationYear : ''}
+                                </p>
+                            </div>
+                            <button class="btn btn-outline-danger btn-sm rounded-circle" onclick="window.LookNepalProfile.deleteEdu(${index})"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadProfile();
+        });
+
+        async function loadProfile() {
+            try {
+                const response = await LookNepal.apiCall('/auth/me');
+                const user = response.user || response;
+
+                if (!user) {
+                    window.location.href = 'signIn.html?redirect=profile.html';
+                    return;
+                }
+
+                currentUserData = user;
+                document.getElementById('userGreeting').textContent = `Hello, ${user.firstName || 'User'}`;
+
+                renderProfile(user);
+                renderWorkExperience(user.workExperience);
+                renderEducation(user.education);
+
+            } catch (error) {
+                console.error('Failed to load profile', error);
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('currentUser');
+                window.location.href = 'signIn.html';
+            }
+        }
+
+
+        function renderProfile(user) {
+            document.getElementById('fullName').value = `${user.firstName || ''} ${user.lastName || ''}`.trim();
+            document.getElementById('email').value = user.email || '';
+            document.getElementById('phone').value = user.phone || '';
+
+            if (user.resume && user.resume.filename) {
+                const uploadDate = user.resume.uploadDate ? new Date(user.resume.uploadDate).toLocaleDateString() : new Date(user.updatedAt).toLocaleDateString();
+                const resumeUrl = `http://localhost:3000/uploads/resumes/${user.resume.filename}`;
+                resumeContainer.innerHTML = `
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <i class="fa-solid fa-file-pdf fa-2x text-danger me-3"></i>
+                            <div class="text-start">
+                                <div class="fw-bold">${user.resume.originalName || 'Current Resume'}</div>
+                                <div class="small text-muted">Uploaded on ${uploadDate}</div> 
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="${resumeUrl}" target="_blank" class="btn btn-outline-primary btn-sm rounded-pill px-3">View</a>
+                            <a href="resumeupload.html" class="btn btn-light btn-sm rounded-pill" title="Replace Resume"><i class="fa-solid fa-arrow-rotate-right"></i></a>
+                        </div>
+                    </div>
+                `;
+                resumeContainer.classList.remove('text-center');
+            } else {
+                resumeContainer.innerHTML = `
+                    <div class="py-3">
+                        <i class="fa-regular fa-file text-muted fa-2x mb-2"></i>
+                        <p class="text-muted mb-0">No resume uploaded yet.</p>
+                        <a href="resumeupload.html" class="small text-decoration-none">Upload now</a>
+                    </div>
+                `;
+                resumeContainer.classList.add('text-center');
+            }
+        }
+
+        function toggleEditMode() {
+            const form = document.getElementById('profileForm');
+            const inputs = form.querySelectorAll('input:not(#email)');
+            const editBtn = document.getElementById('editProfileBtn');
+            const editActions = document.getElementById('editActions');
+            const isEditing = !inputs[0].disabled;
+
+            if (isEditing) {
+                // Cancelled
+                renderProfile(currentUserData); // Reset fields
+                inputs.forEach(input => input.disabled = true);
+                editBtn.classList.remove('d-none');
+                editActions.classList.add('d-none');
+            } else {
+                // Start Editing
+                inputs.forEach(input => input.disabled = false);
+                inputs[0].focus();
+                editBtn.classList.add('d-none');
+                editActions.classList.remove('d-none');
+            }
+        }
+
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('fullName').value;
+            const phone = document.getElementById('phone').value;
+
+            try {
+                const updatedUser = await LookNepal.apiCall('/auth/profile', {
+                    method: 'PUT',
+                    body: JSON.stringify({ firstName: name.split(' ')[0], lastName: name.split(' ')[1] || '', phone })
+                });
+
+                currentUserData = updatedUser;
+                LookNepal.setCurrentUser(updatedUser); // Update local storage
+                alert('Profile updated successfully!');
+
+                // Exit edit mode
+                const inputs = e.target.querySelectorAll('input:not(#email)');
+                inputs.forEach(input => input.disabled = true);
+                document.getElementById('editProfileBtn').classList.remove('d-none');
+                document.getElementById('editActions').classList.add('d-none');
+                document.getElementById('userGreeting').textContent = `Hello, ${updatedUser.name}`;
+
+            } catch (error) {
+                alert(error.message || 'Failed to update profile');
+            }
+        });
+    </script>
+</body>
+
+</html>

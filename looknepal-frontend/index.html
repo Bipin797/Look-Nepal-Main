@@ -29,7 +29,7 @@
   <div class="nav-div">
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
-        <a class="navbar-brand" href="/index.html">Look Nepal</a>
+        <a class="navbar-brand" href="index.html">Look Nepal</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
           aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -37,7 +37,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/index.html">Home</a>
+              <a class="nav-link active" aria-current="page" href="index.html">Home</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="companies.html">Company Reviews</a>
@@ -46,12 +46,10 @@
               <a class="nav-link" href="salary.html">Search Salary</a>
             </li>
           </ul>
-          <div class="right-nav-section">
-            <div>
-              <a href="signIn.html" style="color: #0e46a3; font-weight: 600">Sign In</a>
-            </div>
-            <div class="vrt-line"></div>
-            <div><a href="register.html">Employers / Post Jobs</a></div>
+          <div class="d-flex align-items-center gap-3">
+            <a href="post-job.html" class="btn btn-outline-primary rounded-pill px-4" role="button">Post a Job</a>
+            <!-- <div class="vrt-line mx-2" style="height: 24px; background-color: #ccc;"></div> -->
+            <a href="signIn.html" class="btn btn-primary rounded-pill px-4 text-white" role="button">Sign In</a>
           </div>
         </div>
       </div>
@@ -69,19 +67,31 @@
       </div>
 
       <!-- Search Box -->
-      <div class="search-box">
-        <div><i class="fa-solid fa-magnifying-glass search-icon"></i></div>
-        <div class="text-search">
-          <input type="text" placeholder="Job Title, keywords or company" class="border-0 shadow-none" />
+      <form id="searchForm" class="search-box" onsubmit="event.preventDefault(); window.LookNepal.handleSearch();"
+        style="width: 100%; max-width: 700px;">
+        <div class="d-flex align-items-center w-100 h-100">
+          <div><i class="fa-solid fa-magnifying-glass search-icon" style="margin-top:0;"></i></div>
+          <div class="text-search flex-grow-1 position-relative">
+            <input type="text" id="searchInput" placeholder="Job Title, keywords or company"
+              class="border-0 shadow-none w-100 h-100 px-2" style="font-size: 1rem; outline: none;"
+              autocomplete="off" />
+            <ul id="autocompleteDropdown" class="dropdown-menu shadow w-100 position-absolute mt-2 py-2"
+              style="display: none; max-height: 400px; overflow-y: auto; z-index: 1050; border-radius: 12px; border: 1px solid #e4e4e4;">
+              <!-- Suggestions will be populated here -->
+            </ul>
+          </div>
+          <div class="vrt-line" style="height: 30px; border-left: 1px solid #ccc; margin: 0 10px;"></div>
+          <div class="location-icon-div d-flex align-items-center">
+            <i class="fa-solid fa-location-dot location-icon" style="margin-top:0; font-size: 1.2rem;"></i>
+            <input type="text" id="locationInput" placeholder="Location" class="border-0 shadow-none h-100 px-2"
+              style="width: 130px; font-size: 1rem; outline: none;" />
+          </div>
+          <div class="search-button-div ms-2" style="height: 100%;">
+            <button type="submit" class="search-button h-100 border-0 rounded-pill text-white"
+              style="background-color: #0d47a1; width: 110px; font-weight: bold; cursor: pointer;">Search</button>
+          </div>
         </div>
-        <div class="location-icon-div">
-          <!-- <p style="font-size: 0.7rem">Location</p> -->
-          <i class="fa-solid fa-location-dot location-icon"></i>
-        </div>
-        <div class="search-button-div">
-          <button type="button" class="search-button">Search</button>
-        </div>
-      </div>
+      </form>
 
       <!-- <div
           class="components-base-control__field caf-afe-fb-ba-aeecf-1t5ousf ej5x27r3"
@@ -96,13 +106,187 @@
   </div>
   <hr class="job-list-hr" />
 
-  <!-- JOB LISTS -->
+  <!-- Horizontal Filter Bar -->
+  <style>
+    .filter-pills-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-pills-scroll {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .filter-btn-pill {
+      background-color: #E2E2E2;
+      border: none;
+      font-size: 0.85rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      color: #2d2d2d;
+      font-weight: 500;
+    }
+
+    .filter-btn-pill:hover {
+      background-color: #d4d4d4;
+    }
+
+    .filter-btn-pill.active {
+      background-color: #595959;
+      color: white;
+    }
+
+    .filter-btn-pill.active:hover {
+      background-color: #4a4a4a;
+    }
+  </style>
+  <div id="filterSidebar" class="container mt-3 mb-4 d-none">
+    <div class="d-flex flex-nowrap align-items-center justify-content-center gap-2 pb-2 filter-pills-scroll"
+      style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+
+      <!-- Jobs you haven't seen (Active Example) -->
+      <button class="btn filter-btn-pill active d-flex align-items-center gap-2 flex-shrink-0" id="unseenFilterBtn"
+        onclick="this.style.display='none'">
+        Jobs you haven't seen <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <!-- Pay -->
+      <div class="dropdown flex-shrink-0">
+        <button class="btn filter-btn-pill d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown"
+          id="payFilterBtn">
+          Pay <i class="fa-solid fa-caret-down" style="font-size: 0.75rem;"></i>
+        </button>
+        <ul class="dropdown-menu shadow-sm rounded-3 border-0 mt-1">
+          <li><a class="dropdown-item py-2 fw-semibold text-secondary" href="#"
+              onclick="LookNepal.setFilter('pay', '', 'Pay')">Any Pay</a></li>
+          <li><a class="dropdown-item py-2" href="#" onclick="LookNepal.setFilter('pay', '10000', 'Rs. 10,000+')">Rs.
+              10,000+</a></li>
+          <li><a class="dropdown-item py-2" href="#" onclick="LookNepal.setFilter('pay', '20000', 'Rs. 20,000+')">Rs.
+              20,000+</a></li>
+          <li><a class="dropdown-item py-2" href="#" onclick="LookNepal.setFilter('pay', '30000', 'Rs. 30,000+')">Rs.
+              30,000+</a></li>
+          <li><a class="dropdown-item py-2" href="#" onclick="LookNepal.setFilter('pay', '50000', 'Rs. 50,000+')">Rs.
+              50,000+</a></li>
+        </ul>
+      </div>
+
+      <!-- Remote -->
+      <div class="dropdown flex-shrink-0">
+        <button class="btn filter-btn-pill d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown"
+          id="remoteFilterBtn">
+          Remote <i class="fa-solid fa-caret-down" style="font-size: 0.75rem;"></i>
+        </button>
+        <ul class="dropdown-menu shadow-sm rounded-3 border-0 mt-1">
+          <li><a class="dropdown-item py-2 fw-semibold text-secondary" href="#"
+              onclick="LookNepal.setFilter('remote', '', 'Remote')">Any Setting</a></li>
+          <li><a class="dropdown-item py-2" href="#"
+              onclick="LookNepal.setFilter('remote', 'remote', 'Remote')">Remote</a></li>
+          <li><a class="dropdown-item py-2" href="#"
+              onclick="LookNepal.setFilter('remote', 'hybrid', 'Hybrid')">Hybrid</a></li>
+          <li><a class="dropdown-item py-2" href="#"
+              onclick="LookNepal.setFilter('remote', 'on-site', 'On-site')">On-site</a></li>
+        </ul>
+      </div>
+
+      <!-- Distance -->
+      <div class="dropdown flex-shrink-0">
+        <button class="btn filter-btn-pill active d-flex align-items-center gap-2" type="button"
+          data-bs-toggle="dropdown" id="distanceFilterBtn">
+          Within 50 kilometres <i class="fa-solid fa-caret-down" style="font-size: 0.75rem;"></i>
+        </button>
+        <ul class="dropdown-menu shadow-sm rounded-3 border-0 mt-1">
+          <li><a class="dropdown-item py-2" href="#"
+              onclick="LookNepal.setFilter('distance', 'exact', 'Exact location only')">Exact location only</a></li>
+          <li><a class="dropdown-item py-2" href="#"
+              onclick="LookNepal.setFilter('distance', '10', 'Within 10 kilometres')">Within 10 kilometres</a></li>
+          <li><a class="dropdown-item py-2" href="#"
+              onclick="LookNepal.setFilter('distance', '25', 'Within 25 kilometres')">Within 25 kilometres</a></li>
+          <li><a class="dropdown-item py-2" href="#"
+              onclick="LookNepal.setFilter('distance', '50', 'Within 50 kilometres')">Within 50 kilometres</a></li>
+          <li><a class="dropdown-item py-2" href="#"
+              onclick="LookNepal.setFilter('distance', '100', 'Within 100 kilometres')">Within 100 kilometres</a></li>
+        </ul>
+      </div>
+
+      <!-- Company -->
+      <div class="dropdown flex-shrink-0">
+        <button class="btn filter-btn-pill d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown"
+          id="companyFilterBtn">
+          Company <i class="fa-solid fa-caret-down" style="font-size: 0.75rem;"></i>
+        </button>
+        <ul class="dropdown-menu shadow-sm rounded-3 border-0 mt-1" id="companyDropdownList">
+          <li><a class="dropdown-item py-2 fw-semibold text-secondary" href="#"
+              onclick="LookNepal.setFilter('company', '', 'Company')">Any Company</a></li>
+          <li><a class="dropdown-item py-2" href="#"
+              onclick="LookNepal.setFilter('company', 'TechCorp', 'TechCorp')">TechCorp</a></li>
+          <li><a class="dropdown-item py-2" href="#"
+              onclick="LookNepal.setFilter('company', 'StartupInc', 'StartupInc')">StartupInc</a></li>
+        </ul>
+      </div>
+
+      <!-- Job Type -->
+      <div class="dropdown flex-shrink-0">
+        <button class="btn filter-btn-pill d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown"
+          id="typeFilterBtn">
+          Job Type <i class="fa-solid fa-caret-down" style="font-size: 0.75rem;"></i>
+        </button>
+        <ul class="dropdown-menu shadow-sm rounded-3 border-0 mt-1">
+          <li><a class="dropdown-item py-2 fw-semibold text-secondary" href="#"
+              onclick="LookNepal.setFilter('type', '', 'Job Type')">All Types</a></li>
+          <li><a class="dropdown-item py-2" href="#"
+              onclick="LookNepal.setFilter('type', 'full-time', 'Full-time')">Full-time</a></li>
+          <li><a class="dropdown-item py-2" href="#"
+              onclick="LookNepal.setFilter('type', 'part-time', 'Part-time')">Part-time</a></li>
+          <li><a class="dropdown-item py-2" href="#"
+              onclick="LookNepal.setFilter('type', 'contract', 'Contract')">Contract</a></li>
+          <li><a class="dropdown-item py-2" href="#"
+              onclick="LookNepal.setFilter('type', 'internship', 'Internship')">Internship</a></li>
+          <li><a class="dropdown-item py-2" href="#"
+              onclick="LookNepal.setFilter('type', 'freelance', 'Freelance')">Freelance</a></li>
+        </ul>
+      </div>
+
+      <!-- Posted By -->
+      <div class="dropdown flex-shrink-0">
+        <button class="btn filter-btn-pill d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown"
+          id="postedByFilterBtn">
+          Posted By <i class="fa-solid fa-caret-down" style="font-size: 0.75rem;"></i>
+        </button>
+        <ul class="dropdown-menu shadow-sm rounded-3 border-0 mt-1">
+          <li><a class="dropdown-item py-2 fw-semibold text-secondary" href="#"
+              onclick="LookNepal.setFilter('postedBy', '', 'Posted By')">Anyone</a></li>
+          <li><a class="dropdown-item py-2" href="#"
+              onclick="LookNepal.setFilter('postedBy', 'employer', 'Employer')">Employer</a></li>
+          <li><a class="dropdown-item py-2" href="#"
+              onclick="LookNepal.setFilter('postedBy', 'agency', 'Staffing Agency')">Staffing Agency</a></li>
+        </ul>
+      </div>
+
+      <!-- Education level -->
+      <div class="dropdown flex-shrink-0">
+        <button class="btn filter-btn-pill d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown"
+          id="educationFilterBtn">
+          Education level <i class="fa-solid fa-caret-down" style="font-size: 0.75rem;"></i>
+        </button>
+        <ul class="dropdown-menu shadow-sm rounded-3 border-0 mt-1">
+          <li><a class="dropdown-item py-2 fw-semibold text-secondary" href="#"
+              onclick="LookNepal.setFilter('education', '', 'Education level')">Any Level</a></li>
+          <li><a class="dropdown-item py-2" href="#"
+              onclick="LookNepal.setFilter('education', 'high-school', 'High School')">High School</a></li>
+          <li><a class="dropdown-item py-2" href="#"
+              onclick="LookNepal.setFilter('education', 'bachelors', 'Bachelors Degree')">Bachelors Degree</a></li>
+          <li><a class="dropdown-item py-2" href="#"
+              onclick="LookNepal.setFilter('education', 'masters', 'Masters Degree')">Masters Degree</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
 
   <div class="job-lists">
-    <!-- <p>Jobs based on your activity on Look Nepal</p> -->
     <!-- Dynamic Job Cards Container -->
-    <div class="cards" id="jobListContainer">
+    <div class="cards d-flex flex-column" id="jobListContainer" style="width: 100%; max-width: 450px;">
       <!-- Jobs will be inserted here by main.js -->
+      <nav id="paginationContainer" class="mt-4 mb-4 d-flex justify-content-center w-100"></nav>
     </div>
     <div class="card fastviewjob">
       <div class="card-body">
@@ -116,7 +300,8 @@
             <p class="feature-type">Full-time</p>
           </div>
           <p style="margin: 1rem 0 0 0">Full Time | Remote</p>
-          <div class="btn apply-btn">Apply Now</div>
+          <a href="job-details.html?id=69969b00929fc746d72dc09e"
+            class="btn apply-btn text-white text-decoration-none">Apply Now</a>
           <div class="btn bookmark-btn">
             <i class="fa-regular fa-bookmark"></i>
           </div>

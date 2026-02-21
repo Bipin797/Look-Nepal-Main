@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: function() {
+    required: function () {
       return !this.socialLogin;
     },
     minlength: 6
@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
-  
+
   // User Type and Status
   userType: {
     type: String,
@@ -48,7 +48,7 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
-  
+
   // Social Login Information
   socialLogin: {
     google: {
@@ -60,7 +60,7 @@ const userSchema = new mongoose.Schema({
       email: String
     }
   },
-  
+
   // Profile Information
   profilePicture: {
     type: String,
@@ -74,7 +74,7 @@ const userSchema = new mongoose.Schema({
       default: 'Nepal'
     }
   },
-  
+
   // Job Seeker Specific Fields
   resume: {
     filename: String,
@@ -82,6 +82,10 @@ const userSchema = new mongoose.Schema({
     path: String,
     uploadDate: Date
   },
+  savedJobs: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Job'
+  }],
   skills: [{
     type: String,
     trim: true
@@ -99,14 +103,53 @@ const userSchema = new mongoose.Schema({
       default: 'NPR'
     }
   },
-  
+  workExperience: [{
+    title: { type: String, required: true },
+    company: { type: String, required: true },
+    startDate: { type: Date },
+    endDate: { type: Date },
+    isCurrentRole: { type: Boolean, default: false },
+    description: { type: String }
+  }],
+  education: [{
+    degree: { type: String, required: true },
+    institution: { type: String, required: true },
+    fieldOfStudy: { type: String },
+    graduationYear: { type: Number }
+  }],
+
   // Employer Specific Fields
   company: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Company'
   },
-  
-  // Preferences
+
+  // Onboarding & Preferences
+  onboardingCompleted: {
+    type: Boolean,
+    default: false
+  },
+  preferences: {
+    expectedSalary: {
+      type: Number,
+      default: null
+    },
+    desiredJobTitles: [{
+      type: String,
+      trim: true
+    }],
+    isRemote: {
+      type: Boolean,
+      default: false
+    },
+    profileVisibility: {
+      type: String,
+      enum: ['public', 'private'],
+      default: 'public' // Employers can find you by default
+    }
+  },
+
+  // Job Preferences (Legacy/Deprecated, keep for compatibility)
   jobPreferences: {
     jobTypes: [{
       type: String,
@@ -119,7 +162,7 @@ const userSchema = new mongoose.Schema({
       type: String
     }]
   },
-  
+
   // Activity Tracking
   lastLogin: {
     type: Date
@@ -139,10 +182,10 @@ userSchema.index({ 'socialLogin.google.id': 1 });
 userSchema.index({ 'socialLogin.facebook.id': 1 });
 
 // Hash password before saving
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
   // Only hash the password if it has been modified (or is new)
   if (!this.isModified('password')) return next();
-  
+
   try {
     // Hash password with cost of 12
     const hashedPassword = await bcrypt.hash(this.password, 12);
@@ -154,29 +197,33 @@ userSchema.pre('save', async function(next) {
 });
 
 // Instance method to check password
-userSchema.methods.comparePassword = async function(candidatePassword) {
+userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
 // Instance method to get public profile
-userSchema.methods.getPublicProfile = function() {
+userSchema.methods.getPublicProfile = function () {
   return {
     id: this._id,
     firstName: this.firstName,
     lastName: this.lastName,
     email: this.email,
     userType: this.userType,
+    onboardingCompleted: this.onboardingCompleted,
     profilePicture: this.profilePicture,
     location: this.location,
     skills: this.skills,
     experience: this.experience,
+    workExperience: this.workExperience,
+    education: this.education,
+    resume: this.resume,
     profileViews: this.profileViews,
     createdAt: this.createdAt
   };
 };
 
 // Static method to find by social login
-userSchema.statics.findBySocialLogin = function(provider, socialId) {
+userSchema.statics.findBySocialLogin = function (provider, socialId) {
   const query = {};
   query[`socialLogin.${provider}.id`] = socialId;
   return this.findOne(query);

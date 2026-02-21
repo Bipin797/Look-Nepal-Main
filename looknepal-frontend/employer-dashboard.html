@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Employer Dashboard | Look Nepal</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet" />
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous" />
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css" />
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/faed8028ee.js" crossorigin="anonymous"></script>
+    .employer-navbar {
+    background-color: #2D2D2D;
+    /* Dark background like Indeed Employers */
+    padding: 0.5rem 1rem;
+    }
+
+    .employer-navbar .navbar-brand,
+    .employer-navbar .nav-link {
+    color: white !important;
+    }
+
+    .employer-navbar .nav-link:hover {
+    color: #ccc !important;
+    }
+
+    .btn-post-job-nav {
+    background-color: white;
+    color: #2D2D2D;
+    font-weight: bold;
+    border-radius: 4px;
+    }
+
+    .hero-section {
+    padding: 80px 0;
+    background-color: white;
+    }
+
+    .hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #2D2D2D;
+    }
+
+    .hero-subtitle {
+    font-style: italic;
+    }
+
+    .post-job-cta {
+    background-color: #2557a7;
+    /* Indeed Blue */
+    color: white;
+    font-weight: bold;
+    padding: 12px 32px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    border: none;
+    }
+
+    .post-job-cta:hover {
+    background-color: #164081;
+    color: white;
+    }
+
+    .illustration-img {
+    max-width: 100%;
+    height: auto;
+    }
+
+    /* Adjust user menu standard overrides */
+    #userDropdown {
+    display: none;
+    right: -10px;
+    }
+    #userDropdown.show {
+    display: block;
+    }
+    </style>
+</head>
+
+<body>
+    <!-- Employer Navbar -->
+    <nav class="navbar navbar-expand-lg employer-navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="#">Look Nepal <span class="fw-normal fs-6">for employers</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon bg-light rounded"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-3">
+                    <li class="nav-item"><a class="nav-link" href="post-job.html">Post a job</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Find resumes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Products</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Resources</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-3">
+                    <a href="employer-dashboard.html" class="btn btn-primary btn-sm fw-bold">Go to Dashboard</a>
+                    <a href="#" class="text-white text-decoration-none small">Help Centre <i
+                            class="fa-solid fa-circle-question"></i></a>
+                    <div class="position-relative">
+                        <i class="fa-solid fa-bell text-white mx-2" style="cursor: pointer;"></i>
+                        <button class="btn btn-link text-white p-0 text-decoration-none dropdown-toggle-btn"
+                            onclick="toggleUserMenu()">
+                            <i class="fa-solid fa-user"></i>
+                        </button>
+
+                        <!-- Dropdown Menu matching standard SaaS design -->
+                        <div class="user-menu text-start" id="userDropdown" style="width: 280px;">
+                            <div class="user-menu-header">
+                                <span class="user-menu-header-name">My Dashboard</span>
+                                <span class="user-menu-header-email" id="userEmail">user@example.com</span>
+                            </div>
+
+                            <div class="user-menu-body">
+                                <!-- Billing -->
+                                <a href="#"><i class="fa-solid fa-file-invoice-dollar"></i> Invoices</a>
+                                <a href="#"><i class="fa-solid fa-credit-card"></i> Payment method</a>
+                                <div class="user-menu-divider"></div>
+
+                                <!-- Team -->
+                                <a href="#"><i class="fa-solid fa-users"></i> Manage access</a>
+                                <div class="user-menu-divider"></div>
+
+                                <!-- Account -->
+                                <a href="profile.html"><i class="fa-solid fa-gear"></i> My settings</a>
+                                <a href="#"><i class="fa-solid fa-building"></i> Company settings</a>
+                                <div class="user-menu-divider"></div>
+
+                                <a href="index.html" class="fw-bold"><i class="fa-solid fa-house"></i> Go to Job
+                                    Seekers</a>
+                                <a href="#" onclick="logout()" class="text-danger fw-bold"><i
+                                        class="fa-solid fa-right-from-bracket text-danger"></i> Sign out</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Promo Content (Hidden if jobs exist) -->
+    <div id="promoHero" class="container hero-section">
+        <div class="row align-items-center">
+            <div class="col-lg-5">
+                <h1 class="hero-title mb-4">
+                    Let's make your next<br>
+                    great hire. <span class="hero-subtitle">Fast.</span>
+                </h1>
+                <a href="post-job.html" class="post-job-cta shadow-sm">Post a job</a>
+            </div>
+            <div class="col-lg-7 text-center">
+                <!-- Using a placeholder illustration that matches the vibe -->
+                <img src="https://cdni.iconscout.com/illustration/premium/thumb/hiring-illustration-download-in-svg-png-gif-file-formats--recruitment-job-search-interview-vacancy-human-resource-pack-business-illustrations-4546585.png?f=webp"
+                    alt="Hiring Illustration" class="illustration-img" style="max-height: 400px;">
+            </div>
+        </div>
+
+        <!-- Info Cards -->
+        <div class="row mt-5 pt-5 g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border shadow-sm p-4">
+                    <h1 class="text-primary fw-bold">1</h1>
+                    <h3 class="fw-bold mt-3">Create your account</h3>
+                    <p class="text-muted">You only need a name and email address. No credit card required.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border shadow-sm p-4">
+                    <h1 class="text-primary fw-bold">2</h1>
+                    <h3 class="fw-bold mt-3">Post a job</h3>
+                    <p class="text-muted">Tell us about the role and what you're looking for in a candidate.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border shadow-sm p-4">
+                    <h1 class="text-primary fw-bold">3</h1>
+                    <h3 class="fw-bold mt-3">Review candidates</h3>
+                    <p class="text-muted">We'll send you updates when people apply for your job.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dynamic Dashboard Content (Hidden by default) -->
+    <div class="container my-5" id="dashboardContent" style="display: none; min-height: 60vh;">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <h2 class="fw-bold mb-0 text-dark">My Posted Jobs</h2>
+            <a href="post-job.html" class="btn btn-primary rounded-pill px-4 py-2 shadow-sm fw-bold">Post a New Job</a>
+        </div>
+
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" style="border-radius: 16px; min-width: 600px;">
+                        <thead class="bg-light text-muted">
+                            <tr>
+                                <th class="ps-4 py-3 fw-semibold border-bottom-0">Job Title</th>
+                                <th class="py-3 fw-semibold border-bottom-0">Status</th>
+                                <th class="py-3 fw-semibold border-bottom-0">Posted</th>
+                                <th class="py-3 fw-semibold border-bottom-0">Applicants</th>
+                                <th class="text-end pe-4 py-3 fw-semibold border-bottom-0">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employerJobsTable">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(async () => {
+                const user = window.LookNepal.currentUser();
+
+                if (user && user.userType === 'employer') {
+                    const emailEl = document.getElementById('userEmail');
+                    if (emailEl) emailEl.textContent = user.email;
+
+                    try {
+                        const data = await window.LookNepal.apiCall('/jobs/my-jobs');
+                        const jobs = data.jobs;
+
+                        // If they have jobs, hide the promo and show the table!
+                        if (jobs && jobs.length > 0) {
+                            document.getElementById('promoHero').style.display = 'none';
+                            document.getElementById('dashboardContent').style.display = 'block';
+
+                            const tbody = document.getElementById('employerJobsTable');
+                            tbody.innerHTML = jobs.map(job => {
+                                const date = new Date(job.createdAt).toLocaleDateString();
+                                const applicantCount = job.stats ? job.stats.applications : 0;
+                                const statusColor = job.status === 'active' ? 'bg-success' : 'bg-secondary';
+
+                                return `
+                                    <tr style="cursor: pointer;" onclick="window.location.href='job-applicants.html?jobId=${job._id}'">
+                                        <td class="ps-4 py-4 border-bottom">
+                                            <div class="fw-bold text-dark fs-5">${job.title}</div>
+                                            <div class="text-muted small mt-1"><i class="fa-solid fa-location-dot me-1"></i> ${job.location?.city || 'Remote'}</div>
+                                        </td>
+                                        <td class="py-4 border-bottom"><span class="badge ${statusColor} bg-opacity-10 text-${statusColor.replace('bg-', '')} border border-${statusColor.replace('bg-', '')} rounded-pill px-3 py-2 text-capitalize shadow-sm">${job.status}</span></td>
+                                        <td class="py-4 text-muted border-bottom">${date}</td>
+                                        <td class="py-4 border-bottom">
+                                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary rounded-pill px-3 py-2 shadow-sm">${applicantCount} Applicants</span>
+                                        </td>
+                                        <td class="text-end pe-4 py-4 border-bottom">
+                                            <a href="job-applicants.html?jobId=${job._id}" class="btn btn-sm btn-primary px-4 py-2 rounded-pill shadow-sm fw-bold">Review</a>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('');
+                        }
+                    } catch (e) {
+                        console.error("Failed to load jobs", e);
+                    }
+                } else {
+                    window.location.href = 'signIn.html';
+                }
+            }, 100);
+        });
+
+        function toggleUserMenu() {
+            const menu = document.getElementById('userDropdown');
+            menu.classList.toggle('show');
+        }
+
+        function logout() {
+            window.LookNepal.logout();
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('userDropdown');
+            const btn = document.querySelector('.dropdown-toggle-btn');
+            if (menu && menu.classList.contains('show') && !menu.contains(e.target) && !btn.contains(e.target)) {
+                menu.classList.remove('show');
+            }
+            // if a link inside is clicked
+            if (menu && menu.classList.contains('show') && e.target.closest('a')) {
+                menu.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+
+</html>

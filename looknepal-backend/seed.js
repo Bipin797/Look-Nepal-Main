@@ -94,10 +94,9 @@ const seedData = async () => {
         };
 
         // Create Jobs
-        const jobs = [
+        const jobsData = [
             {
                 title: 'Senior Full Stack Developer',
-                slug: generateSlug('Senior Full Stack Developer'),
                 description: 'We are looking for an experienced Full Stack Developer to join our core team. You will be responsible for building scalable web applications using MERN stack.',
                 requirements: 'Minimum 5 years of experience with Node.js and React. Strong understanding of database design and API development.',
                 responsibilities: 'Lead the development of new features. Mentor junior developers. Code review and optimization.',
@@ -114,7 +113,6 @@ const seedData = async () => {
             },
             {
                 title: 'UI/UX Designer',
-                slug: generateSlug('UI/UX Designer'),
                 description: 'Join our creative team to design beautiful and intuitive user interfaces. You will work closely with product managers and developers.',
                 requirements: 'Portfolio demonstrating strong UI/UX skills. Proficiency in Figma and Adobe Creative Suite.',
                 responsibilities: 'Create wireframes, prototypes, and high-fidelity mockups. Conduct user research and usability testing.',
@@ -131,7 +129,6 @@ const seedData = async () => {
             },
             {
                 title: 'Junior DevOps Engineer',
-                slug: generateSlug('Junior DevOps Engineer'),
                 description: 'Start your career in DevOps with TechCorp. We provide training and mentorship.',
                 requirements: 'Basic knowledge of Linux and cloud platforms. Willingness to learn.',
                 responsibilities: 'Assist in CI/CD pipeline management. Monitor system performance.',
@@ -148,7 +145,6 @@ const seedData = async () => {
             },
             {
                 title: 'Marketing Manager',
-                slug: generateSlug('Marketing Manager'),
                 description: 'Lead our marketing efforts and grow our brand presence.',
                 requirements: '3+ years in digital marketing. Proven track record of successful campaigns.',
                 responsibilities: 'Develop marketing strategies. Manage social media channels.',
@@ -165,14 +161,13 @@ const seedData = async () => {
             },
             {
                 title: 'Freelance Content Writer',
-                slug: generateSlug('Freelance Content Writer'),
                 description: 'Write engaging content for our blog and social media.',
                 requirements: 'Excellent writing skills in English and Nepali.',
                 responsibilities: 'Produce 2-3 articles per week.',
                 jobType: 'freelance',
                 category: 'Marketing',
                 experienceLevel: 'entry',
-                salary: { min: 10000, max: 20000, currency: 'NPR' }, // Per article effectively, but stored as monthly range for simplicity
+                salary: { min: 10000, max: 20000, currency: 'NPR' },
                 location: { city: 'Remote', country: 'Nepal', isRemote: true },
                 company: company2._id,
                 postedBy: employer2._id,
@@ -182,7 +177,12 @@ const seedData = async () => {
             }
         ];
 
-        const createdJobs = await Job.insertMany(jobs);
+        const createdJobs = [];
+        for (const jobData of jobsData) {
+            const job = new Job(jobData);
+            await job.save();
+            createdJobs.push(job);
+        }
         console.log('Jobs Created');
 
         // Create Job Seeker

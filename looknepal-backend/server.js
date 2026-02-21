@@ -21,6 +21,7 @@ const authRoutes = require('./routes/auth');
 const jobRoutes = require('./routes/jobs');
 const companyRoutes = require('./routes/companies');
 const applicationRoutes = require('./routes/applications');
+const adminRoutes = require('./routes/admin');
 
 // =================================================================
 //                      2. APP CONFIGURATION
@@ -65,9 +66,12 @@ mongoose.connect(process.env.MONGO_URI)
 
 // Route modules
 app.use('/api/auth', authRoutes);
+app.use('/api/users', require('./routes/users'));
 app.use('/api/jobs', jobRoutes);
 app.use('/api/companies', companyRoutes);
 app.use('/api/applications', applicationRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/messages', require('./routes/messages'));
 
 /**
  * @route   GET /

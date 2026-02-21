@@ -3,6 +3,8 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const Application = require('../models/Application');
 const Job = require('../models/Job');
+const User = require('../models/User');
+const { sendEmail } = require('../utils/email');
 const { authenticate, authorize } = require('../middleware/auth');
 
 const router = express.Router();
@@ -81,6 +83,26 @@ router.post('/', authenticate, authorize('job_seeker'), validateApplication, asy
     await application.populate('job', 'title company');
     await application.populate('applicant', 'firstName lastName email');
 
+    // Notify Employer via Email (non-blocking)
+    if (job.postedBy) {
+      User.findById(job.postedBy).then(employer => {
+        if (employer && employer.email) {
+          sendEmail({
+            to: employer.email,
+            subject: `New Application: ${job.title}`,
+            html: `
+              <h3>Hello ${employer.firstName || 'Employer'},</h3>
+              <p>You have received a new application for your job posting: <strong>${job.title}</strong>.</p>
+              <p><strong>Applicant:</strong> ${application.applicant.firstName} ${application.applicant.lastName} (${application.applicant.email})</p>
+              <p>Please log in to your <a href="http://localhost:5500/employer-dashboard.html">Employer Dashboard</a> to review their profile and cover letter.</p>
+              <br/>
+              <p>Best regards,<br/>The Look Nepal Team</p>
+            `
+          });
+        }
+      }).catch(err => console.error('Failed to look up employer for email notification:', err));
+    }
+
     res.status(201).json({
       message: 'Application submitted successfully',
       application: application.getPublicInfo()
@@ -103,14 +125,14 @@ router.post('/', authenticate, authorize('job_seeker'), validateApplication, asy
 router.get('/my-applications', authenticate, authorize('job_seeker'), async (req, res) => {
   try {
     const { status, page = 1, limit = 10 } = req.query;
-    
+
     let filters = { applicant: req.user._id };
     if (status) {
       filters.status = status;
     }
 
     const skip = (page - 1) * limit;
-    
+
     const applications = await Application.find(filters)
       .populate('job', 'title company slug jobType category salary location status applicationDeadline')
       .populate({
@@ -172,7 +194,7 @@ router.get('/:id', authenticate, async (req, res) => {
     // Check if user is authorized to view this application
     const isApplicant = application.applicant._id.toString() === req.user._id.toString();
     const isJobPoster = application.job.postedBy.toString() === req.user._id.toString();
-    
+
     if (!isApplicant && !isJobPoster) {
       return res.status(403).json({
         message: 'You do not have permission to view this application'
@@ -290,7 +312,7 @@ router.get('/job/:jobId', authenticate, authorize('employer'), async (req, res) 
     }
 
     const skip = (page - 1) * limit;
-    
+
     const applications = await Application.find(filters)
       .populate('applicant', 'firstName lastName email phone skills experience profilePicture')
       .sort({ appliedAt: -1 })

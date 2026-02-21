@@ -198,10 +198,10 @@ router.put('/profile', authenticate, [
     }
 
     const allowedUpdates = [
-      'firstName', 'lastName', 'phone', 'location', 'skills', 
-      'experience', 'expectedSalary', 'jobPreferences'
+      'firstName', 'lastName', 'phone', 'location', 'skills',
+      'experience', 'expectedSalary', 'jobPreferences', 'workExperience', 'education'
     ];
-    
+
     const updates = Object.keys(req.body);
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
 
@@ -218,7 +218,7 @@ router.put('/profile', authenticate, [
     await req.user.save();
 
     const userData = req.user.getPublicProfile();
-    
+
     res.json({
       message: 'Profile updated successfully',
       user: userData
@@ -292,6 +292,83 @@ router.post('/logout', authenticate, async (req, res) => {
       message: 'Server error during logout',
       error: error.message
     });
+  }
+});
+
+/**
+ * @route   POST /api/auth/social-login
+ * @desc    Login or register with social account
+ * @access  Public
+ */
+router.post('/social-login', [
+  body('email').isEmail().normalizeEmail().withMessage('Please provide a valid email'),
+  body('firstName').trim().notEmpty().withMessage('First name is required'),
+  body('lastName').trim().notEmpty().withMessage('Last name is required'),
+  body('provider').isIn(['google', 'facebook']).withMessage('Invalid provider'),
+  body('providerId').notEmpty().withMessage('Provider ID is required')
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { email, firstName, lastName, provider, providerId, photoUrl } = req.body;
+
+    // Check if user exists
+    let user = await User.findOne({ email });
+
+    if (user) {
+      // User exists, update social login info if needed
+      if (!user.socialLogin) user.socialLogin = {};
+
+      // If the specific provider ID is missing for this user, add it
+      if (!user.socialLogin[provider] || user.socialLogin[provider].id !== providerId) {
+        user.socialLogin[provider] = { id: providerId, email };
+        await user.save();
+      }
+    } else {
+      // Create new user
+      const socialLoginData = {};
+      socialLoginData[provider] = { id: providerId, email };
+
+      user = new User({
+        firstName,
+        lastName,
+        email,
+        userType: 'job_seeker', // Default to job seeker for social login
+        socialLogin: socialLoginData,
+        isVerified: true, // Social login emails are verified by provider
+        profilePicture: photoUrl || ''
+      });
+
+      await user.save();
+    }
+
+    // Check if account is active
+    if (!user.isActive) {
+      return res.status(401).json({ message: 'Account is deactivated.' });
+    }
+
+    // Update last login
+    user.lastLogin = new Date();
+    await user.save();
+
+    // Generate JWT
+    const token = generateToken({
+      userId: user._id,
+      userType: user.userType
+    });
+
+    res.json({
+      message: 'Login successful',
+      token,
+      user: user.getPublicProfile()
+    });
+
+  } catch (error) {
+    console.error('Social login error:', error);
+    res.status(500).json({ message: 'Server error during social login', error: error.message });
   }
 });
 

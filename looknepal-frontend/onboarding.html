@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Look Nepal Setup | Onboarding</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet" />
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous" />
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/faed8028ee.js" crossorigin="anonymous"></script>
+
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #ffffff;
+            color: #2d2d2d;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Top Progress Bar */
+        .progress-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding-top: 40px;
+            text-align: center;
+        }
+
+        .progress-text {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+
+        .progress {
+            height: 6px;
+            border-radius: 4px;
+            background-color: #e5e7eb;
+            overflow: hidden;
+            border: 1px solid #d1d5db;
+        }
+
+        .progress-bar {
+            background-color: #0d47a1;
+            transition: width 0.4s ease;
+        }
+
+        /* Main Form Area */
+        .onboarding-main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            padding-top: 50px;
+        }
+
+        .step-container {
+            width: 100%;
+            max-width: 600px;
+            padding: 0 20px;
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .step-container.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2.question-title {
+            font-weight: 800;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #2d2d2d;
+            line-height: 1.2;
+        }
+
+        p.question-subtitle {
+            color: #6b7280;
+            font-size: 1rem;
+            margin-bottom: 30px;
+        }
+
+        /* Form Controls */
+        .form-label {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            border: 1px solid #9ca3af;
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 1rem;
+            box-shadow: none;
+        }
+
+        .form-control:focus {
+            border-color: #0d47a1;
+            box-shadow: 0 0 0 1px #0d47a1;
+        }
+
+        /* Toggle Checkbox mimicking screenshot */
+        .remote-toggle {
+            display: flex;
+            align-items: center;
+            margin-top: 30px;
+            cursor: pointer;
+        }
+
+        .remote-toggle input {
+            display: none;
+        }
+
+        .toggle-switch {
+            width: 44px;
+            height: 24px;
+            background-color: #4b5563;
+            border-radius: 12px;
+            position: relative;
+            margin-right: 15px;
+            transition: background-color 0.2s;
+        }
+
+        .toggle-switch::after {
+            content: 'x';
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background-color: #374151;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.2s;
+            border: 2px solid white;
+        }
+
+        .remote-toggle input:checked+.toggle-switch {
+            background-color: #0d47a1;
+        }
+
+        .remote-toggle input:checked+.toggle-switch::after {
+            content: '✓';
+            color: #0d47a1;
+            background-color: white;
+            border-color: white;
+            transform: translateX(20px);
+        }
+
+        .remote-toggle-label {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        /* Notice Banner */
+        .notice-banner {
+            background-color: #eff6ff;
+            border-radius: 8px;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            color: #1e3a8a;
+            font-weight: 500;
+            margin-bottom: 25px;
+        }
+
+        .notice-banner i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* Radio Buttons for Pay Period & Visibility */
+        .radio-pill-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .radio-pill {
+            flex: 1;
+            text-align: center;
+        }
+
+        .radio-pill input[type="radio"] {
+            display: none;
+        }
+
+        .radio-pill label {
+            display: block;
+            padding: 10px 0;
+            border: 1px solid #d1d5db;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .radio-pill input[type="radio"]:checked+label {
+            background-color: #f3f4f6;
+            border-color: #374151;
+            border-width: 2px;
+            padding: 9px 0;
+            /* adjust for border width */
+        }
+
+        /* Large Selection Cards for Step 4 */
+        .selection-card {
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .selection-card:hover {
+            border-color: #9ca3af;
+        }
+
+        .selection-card input[type="radio"] {
+            position: absolute;
+            right: 20px;
+            top: 25px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .selection-card.selected {
+            border-color: #374151;
+            border-width: 2px;
+            padding: 19px;
+            background-color: #f9fafb;
+        }
+
+        .selection-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .selection-title i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .selection-desc {
+            color: #4b5563;
+            font-size: 0.95rem;
+            padding-right: 30px;
+        }
+
+        .badge-recommended {
+            background-color: #e5e7eb;
+            color: #374151;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        /* Navigation Buttons */
+        .nav-buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 40px;
+            gap: 15px;
+            padding-bottom: 50px;
+        }
+
+        .btn-back {
+            background-color: white;
+            color: #0d47a1;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 700;
+            transition: all 0.2s;
+        }
+
+        .btn-back:hover {
+            background-color: #f3f4f6;
+            border-color: #9ca3af;
+        }
+
+        .btn-continue {
+            background-color: #0d47a1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-weight: 700;
+            transition: background-color 0.2s;
+        }
+
+        .btn-continue:hover {
+            background-color: #0a3a85;
+        }
+
+        .btn-continue:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        /* Success Modal Overlay */
+        #successOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(200, 200, 200, 0.4);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .success-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            overflow: hidden;
+            text-align: center;
+            padding-bottom: 30px;
+            animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .success-img-container {
+            width: 100%;
+            height: 200px;
+            background-color: #a7f3d0;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        .success-img-container img {
+            height: 180px;
+            object-fit: contain;
+        }
+
+        .success-msg {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: #111827;
+            padding: 20px 30px;
+            margin-top: 10px;
+        }
+
+        .spinner-loader {
+            width: 24px;
+            height: 24px;
+            border: 3px solid #e5e7eb;
+            border-top-color: #9ca3af;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .prefix-input-group {
+            position: relative;
+        }
+
+        .prefix-input-group::before {
+            content: '$';
+            /* Or Rs. */
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .prefix-input-group input {
+            padding-left: 30px;
+        }
+
+        .footer-terms {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="progress-container">
+        <div class="progress-text" id="progressText">25% complete</div>
+        <div class="progress">
+            <div class="progress-bar" id="progressBar" style="width: 25%"></div>
+        </div>
+    </div>
+
+    <div class="onboarding-main">
+
+        <!-- Step 1: Location -->
+        <div class="step-container active" id="step1">
+            <h2 class="question-title">Let's start with the basics. Where are you located?</h2>
+            <p class="question-subtitle">We use this to match you with jobs nearby.</p>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">City, State/Territory</label>
+                    <input type="text" class="form-control" id="inputCity" placeholder="e.g. Kathmandu, Bagmati">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Postcode (Optional)</label>
+                    <input type="text" class="form-control" id="inputPostcode">
+                </div>
+            </div>
+
+            <label class="remote-toggle">
+                <input type="checkbox" id="inputRemote">
+                <div class="toggle-switch"></div>
+                <span class="remote-toggle-label">I'm interested in remote work</span>
+            </label>
+
+            <div class="nav-buttons" style="justify-content: flex-end;">
+                <!-- No Back button on step 1 -->
+                <button class="btn-continue" onclick="window.onboardingLogic.nextStep(2)">Continue</button>
+            </div>
+        </div>
+
+        <!-- Step 2: Pay -->
+        <div class="step-container" id="step2">
+            <h2 class="question-title">What's the minimum pay you're looking for?</h2>
+            <p class="question-subtitle">We use this to match you with jobs that pay around and above this amount.</p>
+
+            <div class="notice-banner">
+                <i class="fa-solid fa-eye-slash"></i> Not shown to employers.
+            </div>
+
+            <label class="form-label">Minimum base salary</label>
+            <div class="prefix-input-group mb-4">
+                <input type="number" class="form-control" id="inputSalary" placeholder="e.g. 50000">
+            </div>
+
+            <label class="form-label">Pay period</label>
+            <div class="radio-pill-group" style="max-width: 250px;">
+                <div class="radio-pill">
+                    <input type="radio" name="payPeriod" id="payHour" value="hour">
+                    <label for="payHour">Per hour</label>
+                </div>
+                <div class="radio-pill">
+                    <input type="radio" name="payPeriod" id="payYear" value="year" checked>
+                    <label for="payYear">Per year</label>
+                </div>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn-back" onclick="window.onboardingLogic.prevStep(1)">Back</button>
+                <button class="btn-continue" onclick="window.onboardingLogic.nextStep(3)">Continue</button>
+            </div>
+        </div>
+
+        <!-- Step 3: Desired Job -->
+        <div class="step-container" id="step3">
+            <h2 class="question-title">What job are you looking for?</h2>
+            <p class="question-subtitle">This helps us show you the most relevant jobs. You can always change this
+                later.</p>
+
+            <label class="form-label">Job title</label>
+            <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 5px;">Primary job title you're seeking</p>
+            <input type="text" class="form-control" id="inputJobTitle"
+                placeholder="e.g. Software Engineer, Marketing Manager">
+
+            <div class="nav-buttons">
+                <button class="btn-back" onclick="window.onboardingLogic.prevStep(2)">Back</button>
+                <button class="btn-continue" onclick="window.onboardingLogic.nextStep(4)">Continue</button>
+            </div>
+        </div>
+
+        <!-- Step 4: Visibility -->
+        <div class="step-container" id="step4">
+            <h2 class="question-title">Connect with employers</h2>
+            <p class="question-subtitle">You can change this setting in your profile any time.</p>
+
+            <div class="selection-card selected"
+                onclick="document.getElementById('visPublic').click(); window.onboardingLogic.selectCard(this);">
+                <div class="badge-recommended">Recommended</div>
+                <input type="radio" name="visibility" id="visPublic" value="public" checked>
+                <div class="selection-title"><i class="fa-solid fa-eye text-dark"></i> Employers can find you on Look
+                    Nepal</div>
+                <div class="selection-desc">Employers can find your profile through Look Nepal and contact you about
+                    jobs. We attempt to hide identifiable details until you respond to employers.</div>
+            </div>
+
+            <div class="selection-card"
+                onclick="document.getElementById('visPrivate').click(); window.onboardingLogic.selectCard(this);">
+                <input type="radio" name="visibility" id="visPrivate" value="private">
+                <div class="selection-title"><i class="fa-solid fa-eye-slash text-dark"></i> Employers can't find you on
+                    Look Nepal</div>
+                <div class="selection-desc">Only employers you've applied to can see you on Look Nepal. Other employers
+                    can't find your profile on Look Nepal or reach out about jobs.</div>
+            </div>
+
+            <a href="#" class="text-secondary text-decoration-underline" style="font-size: 0.85rem;">Privacy Policy</a>
+
+            <div class="nav-buttons">
+                <button class="btn-back" onclick="window.onboardingLogic.prevStep(3)">Back</button>
+                <button class="btn-continue" onclick="window.onboardingLogic.submitSetup(this)">Continue</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer-terms">
+        &copy; 2026 Look Nepal - Cookies, Privacy and Terms
+    </div>
+
+    <!-- Success Overlay -->
+    <div id="successOverlay">
+        <div class="success-card">
+            <div class="success-img-container">
+                <!-- Fallback to a placeholder thumbs up image if custom illustration not linked -->
+                <img src="https://cdni.iconscout.com/illustration/premium/thumb/thumbs-up-4710189-3914445.png"
+                    alt="Thumbs up">
+            </div>
+            <div class="success-msg">
+                Saving your preferences and gathering a list of jobs for you...
+            </div>
+            <div class="spinner-loader"></div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/onboarding.js"></script>
+</body>
+
+</html>

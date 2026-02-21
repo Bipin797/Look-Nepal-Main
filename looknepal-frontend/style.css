@@ -5,15 +5,18 @@ body {
   margin: 0;
   background-color: white;
   color: black;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 /* VIEWPORT */
 .main {
   display: flex;
-  height: 70vh;
+  flex: 1;
+  /* Pushes footer down */
   padding: 0.5rem;
   flex-direction: row;
-  /* align-items: center; */
   justify-content: center;
   /* background-color: #fff2e1; */
 }
@@ -109,13 +112,18 @@ hr {
 .search-box {
   height: 62px;
   width: 552px;
-  border: 1px solid black;
+  border: 1px solid #e2e8f0;
   border-radius: 2rem;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   background-color: white;
-  box-shadow: 10px 10px #bed7dc;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease;
+}
+
+.search-box:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .search-icon {
@@ -137,11 +145,15 @@ hr {
   width: 110px;
   /* position: relative; */
   background-color: #0e46a3;
-  border-radius: 2rem 2rem 2rem 0;
+  border-radius: 0 2rem 2rem 0;
+  /* Fix rounding to match input */
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: 1rem;
+  margin-left: -20px;
+  /* Pull closer to input */
+  z-index: 1;
+  cursor: pointer;
 }
 
 .search-button-div:hover {
@@ -210,18 +222,20 @@ h1 {
 }
 
 .card {
-  width: 450px;
-  border: 0.5px solid lightgray;
-  border-radius: 10px;
+  width: 100%;
+  max-width: 450px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
   padding: 20px;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  background-color: #ffffff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
 }
 
 .card:hover {
-  box-shadow:
-  /* inset 0 -3em 3em, */
-  /* 0 0 0 2px white, */ 0.1em 0.2em 0.5em
-    #bed7dc;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border-color: #cbd5e1;
 }
 
 .card-body {
@@ -266,8 +280,9 @@ h1 {
 .fastviewjob {
   background-color: white;
   width: 550px;
-  border: 0.5px solid lightgrey;
-  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   /* padding: 2rem 1rem 0 1rem; */
   height: 100%;
   max-height: 100%;
@@ -289,6 +304,12 @@ h1 {
 .apply-btn {
   background-color: #0e46a3;
   font-weight: bold;
+  color: white;
+}
+
+.apply-btn:hover {
+  background-color: #0b3680;
+  /* Darker shade of the button color */
   color: white;
 }
 
@@ -316,12 +337,16 @@ h1 {
 }
 
 .footer {
-  height: 150px;
   width: 100%;
+  background-color: #f8f9fa;
+  /* Light grey background */
+  margin-top: auto;
+  /* Push to bottom if body is flex */
 }
 
 footer {
-  padding: 10px;
+  padding: 20px;
+  text-align: center;
 }
 
 .footer-top {
@@ -361,26 +386,22 @@ footer {
 }
 
 .sign-in-form {
-  height: 520px;
-  width: 500px;
+  min-height: 520px;
+  /* Allow growth */
+  width: 450px;
   border: 0.5px solid grey;
   border-radius: 8px;
   padding: 24px;
-  /* display: flex;
-  flex-direction: column; */
+  background-color: white;
+  margin-bottom: 2rem;
 }
 
-.sign-in-form h5 {
-  font-weight: bold;
-}
-
-/* Facebook Sign-in Button Styling */
-.facebook-btn {
+.google-btn {
   width: 100%;
   padding: 12px 16px;
-  background-color: #1877F2;
-  color: white;
-  border: none;
+  background-color: white;
+  color: #3c4043;
+  border: 1px solid #dadce0;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
@@ -388,97 +409,169 @@ footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
   margin-bottom: 10px;
 }
 
+.google-btn:hover {
+  background-color: #f7f8f8;
+  border-color: #d2e3fc;
+}
+
+.facebook-btn {
+  width: 100%;
+  height: 40px;
+  /* Match Google button approximately */
+  padding: 2px 16px;
+  background-color: white;
+  color: #3c4043;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  /* Slightly squarer than pill */
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  /* margin-bottom: 10px; */
+}
+
 .facebook-btn:hover {
-  background-color: #166fe5;
-}
-
-.facebook-btn:active {
-  background-color: #1464cc;
-  transform: translateY(1px);
-}
-
-.facebook-btn:disabled {
-  background-color: #8bb6f0;
-  cursor: not-allowed;
-}
-
-#facebookBtnText {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.sign-in-btns {
-  display: flex;
-  justify-content: center;
-}
-
-.sign-in-div {
-  height: 45px;
-  width: 450px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  /* align-items: center; */
-  /* padding: 2px; */
-  border: 0.5px solid grey;
-  border-radius: 5px;
-  margin-bottom: 1rem;
-}
-
-/* .sign-in-div p {
-  font-family: "Montserrat", sans-serif;
-  font-weight: bold;
-} */
-
-/* .sign-in-google {
-  width: 100%;
-  background-color: white;
-  border: 0.5px solid grey;
-  border-radius: 5px;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-} */
-
-.google-icon {
-  font-size: 1.5rem;
-  align-self: flex-start;
-}
-
-.continue-text {
-  width: 90%;
-}
-
-.sign-in-fb {
-  width: 100%;
-  background-color: white;
-  border: 0.5px solid grey;
-  border-radius: 5px;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.facebook-icon {
-  font-size: 1.5rem;
-  align-self: flex-start;
+  background-color: #f0f2f5;
+  border-color: #d2e3fc;
 }
 
 .email-address-input {
   width: 100%;
-  border: 0.5px solid grey;
+  padding: 10px;
+  border: none;
+  outline: none;
   border-radius: 5px;
+}
+
+.sign-in-div {
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .continue-btn {
   width: 100%;
+  padding: 12px;
   background-color: #0e46a3;
-  border: 0.5px solid grey;
-  border-radius: 5px;
+  border: none;
+  border-radius: 8px;
   color: white;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  /* Added gap */
+}
+
+.continue-btn:hover {
+  opacity: 0.9;
+}
+
+/* --- Professional SaaS User Dropdown Menu --- */
+.user-menu {
+  position: absolute;
+  top: calc(100% + 12px);
+  /* Add a gap below the nav item */
+  right: 0;
+  z-index: 1050;
+  min-width: 240px;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  /* 8px */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  /* Tailwind shadow-lg */
+  transform-origin: top right;
+  animation: dropdownFadeInScale 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+  transform: scale(0.95) translateY(-5px);
+  padding: 0.5rem;
+  color: #374151;
+  /* text-gray-700 */
+}
+
+@keyframes dropdownFadeInScale {
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.user-menu-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f3f4f6;
+  /* gray-100 */
+  margin: -0.5rem -0.5rem 0.5rem -0.5rem;
+  /* pull up to edges so border spans full width */
+  border-radius: 0.5rem 0.5rem 0 0;
+  background-color: #f9fafb;
+  /* gray-50 */
+}
+
+.user-menu-header-name {
+  font-weight: 600;
+  color: #111827;
+  /* gray-900 */
+  font-size: 0.875rem;
+  /* 14px */
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.user-menu-header-email {
+  color: #6b7280;
+  /* gray-500 */
+  font-size: 0.75rem;
+  /* 12px */
+  display: block;
+}
+
+.user-menu-body a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  color: #374151;
+  /* gray-700 */
+  text-decoration: none;
+  border-radius: 0.375rem;
+  /* 6px */
+  font-size: 0.875rem;
+  /* 14px */
+  font-weight: 500;
+  transition: all 0.15s ease-in-out;
+}
+
+.user-menu-body a i {
+  color: #9ca3af;
+  /* gray-400 */
+  width: 1rem;
+  /* fixed width for alignment */
+  text-align: center;
+  transition: color 0.15s ease-in-out;
+}
+
+.user-menu-body a:hover {
+  background-color: #f3f4f6;
+  /* gray-100 */
+  color: #111827;
+  /* gray-900 */
+}
+
+.user-menu-body a:hover i {
+  color: #2563eb;
+  /* blue-600 */
+}
+
+.user-menu-divider {
+  height: 1px;
+  background-color: #f3f4f6;
+  /* gray-100 */
+  margin: 0.5rem 0;
 }

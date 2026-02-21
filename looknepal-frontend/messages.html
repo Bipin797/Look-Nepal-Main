@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Messages | Look Nepal</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css" />
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/faed8028ee.js" crossorigin="anonymous"></script>
+    <style>
+        .chat-container {
+            height: calc(100vh - 160px);
+            min-height: 500px;
+        }
+
+        .conversation-list {
+            height: 100%;
+            overflow-y: auto;
+            border-right: 1px solid #dee2e6;
+        }
+
+        .conversation-item {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .conversation-item:hover,
+        .conversation-item.active {
+            background-color: #f8f9fa;
+        }
+
+        .message-window {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message-history {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            background-color: #fcfcfc;
+        }
+
+        .message-bubble {
+            max-width: 75%;
+            padding: 10px 15px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+            width: fit-content;
+        }
+
+        .message-sent {
+            background-color: #0d47a1;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message-received {
+            background-color: #e9ecef;
+            color: #212529;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-input-area {
+            border-top: 1px solid #dee2e6;
+            background: white;
+            padding: 1rem;
+        }
+    </style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <div class="nav-div bg-white shadow-sm">
+        <nav class="navbar navbar-expand-lg bg-white">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold" href="index.html">Look Nepal</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link active fw-semibold" href="messages.html">Messages</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="my-applications.html">My Applications</a></li>
+                    </ul>
+                    <div class="d-flex align-items-center gap-3" id="authSection">
+                        <!-- Populated by main.js auth check -->
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <div class="container my-4 flex-grow-1">
+        <div class="bg-white rounded-4 shadow-sm border overflow-hidden d-flex chat-container">
+
+            <!-- Sidebar: Conversation List -->
+            <div class="col-md-4 col-12 conversation-list">
+                <div class="p-3 border-bottom bg-light">
+                    <h5 class="fw-bold mb-0">Messages</h5>
+                </div>
+                <div id="conversationsContainer">
+                    <div class="text-center p-4 text-muted small">
+                        <div class="spinner-border spinner-border-sm text-primary mb-2" role="status"></div>
+                        <br>Loading conversations...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main: Chat Window -->
+            <div class="col-md-8 d-none d-md-flex message-window" id="chatArea">
+                <!-- Empty State -->
+                <div id="chatEmptyState"
+                    class="w-100 h-100 d-flex flex-column justify-content-center align-items-center text-muted">
+                    <i class="fa-regular fa-comments fa-3x mb-3 text-light-gray"></i>
+                    <h5>Your Messages</h5>
+                    <p>Select a conversation to start chatting.</p>
+                </div>
+
+                <!-- Active Chat -->
+                <div id="chatActiveState" class="w-100 h-100 d-none flex-column">
+                    <!-- Chat Header -->
+                    <div class="p-3 border-bottom d-flex align-items-center justify-content-between bg-white z-index-1">
+                        <div class="d-flex align-items-center gap-3">
+                            <button class="btn btn-sm btn-light d-md-none rounded-circle me-2"
+                                onclick="closeChatMobile()"><i class="fa-solid fa-arrow-left"></i></button>
+                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 40px; height: 40px;">
+                                <i class="fa-regular fa-user text-secondary"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-bold" id="chatHeaderName">User Name</h6>
+                                <small class="text-muted" id="chatHeaderContext">Job Title</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Messages -->
+                    <div class="message-history d-flex flex-column" id="messageHistory">
+                        <!-- Populated dynamically -->
+                    </div>
+
+                    <!-- Input Area -->
+                    <div class="message-input-area">
+                        <form id="messageForm" class="d-flex gap-2">
+                            <input type="text" id="messageInput" class="form-control rounded-pill px-4"
+                                placeholder="Type a message..." required autocomplete="off">
+                            <button type="submit" class="btn btn-primary rounded-circle"
+                                style="width: 45px; height: 45px; flex-shrink: 0;"><i
+                                    class="fa-solid fa-paper-plane"></i></button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = window.LookNepal.currentUser();
+            if (!user) {
+                window.location.href = 'signIn.html?returnUrl=messages.html';
+                return;
+            }
+
+            // Authentication UI Update logic handled in main.js
+
+            await loadConversations();
+        });
+
+        let currentActiveConversationId = null;
+        let currentReceiverId = null;
+        let messagePollingInterval = null;
+
+        async function loadConversations() {
+            try {
+                const conversations = await LookNepal.apiCall('/messages/conversations');
+                const container = document.getElementById('conversationsContainer');
+
+                if (!conversations || conversations.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center p-5 text-muted">
+                            <p class="mb-0 small">No messages yet.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const myUserId = LookNepal.currentUser().id;
+
+                container.innerHTML = conversations.map(conv => {
+                    const otherUser = conv.participants.find(p => p._id !== myUserId);
+                    const name = otherUser ? `${otherUser.firstName} ${otherUser.lastName}` : 'Unknown User';
+                    const context = conv.jobContext ? conv.jobContext.title : '';
+                    const time = new Date(conv.lastMessageAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+                    const isActive = currentActiveConversationId === conv._id;
+
+                    return `
+                        <div class="p-3 border-bottom conversation-item ${isActive ? 'active' : ''}" onclick="openConversation('${conv._id}', '${name}', '${otherUser._id}', '${context}')" id="conv-${conv._id}">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <h6 class="fw-bold mb-0 text-truncate" style="max-width: 70%;">${name}</h6>
+                                <small class="text-muted" style="font-size: 0.75rem;">${time}</small>
+                            </div>
+                            ${context ? `<small class="d-block text-primary mb-1 text-truncate">${context}</small>` : ''}
+                            <p class="mb-0 text-muted small text-truncate">${conv.lastMessage || 'No messages yet'}</p>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error('Error loading conversations', error);
+                document.getElementById('conversationsContainer').innerHTML = `<div class="p-3 text-danger small">Failed to load conversations.</div>`;
+            }
+        }
+
+        async function openConversation(convId, name, receiverId, context) {
+            currentActiveConversationId = convId;
+            currentReceiverId = receiverId;
+
+            // UI Updates
+            document.querySelectorAll('.conversation-item').forEach(el => el.classList.remove('active'));
+            const convEl = document.getElementById(`conv-${convId}`);
+            if (convEl) convEl.classList.add('active');
+
+            document.getElementById('chatEmptyState').classList.add('d-none');
+            const activeState = document.getElementById('chatActiveState');
+            activeState.classList.remove('d-none');
+            activeState.classList.add('d-flex');
+
+            // Mobile handling
+            if (window.innerWidth < 768) {
+                document.querySelector('.conversation-list').classList.add('d-none');
+                document.getElementById('chatArea').classList.remove('d-none');
+                document.getElementById('chatArea').classList.add('d-flex');
+            }
+
+            document.getElementById('chatHeaderName').textContent = name;
+            document.getElementById('chatHeaderContext').textContent = context || '';
+
+            await loadMessages(convId);
+
+            // Start polling for new messages
+            if (messagePollingInterval) clearInterval(messagePollingInterval);
+            messagePollingInterval = setInterval(() => loadMessages(convId, true), 5000);
+        }
+
+        function closeChatMobile() {
+            document.querySelector('.conversation-list').classList.remove('d-none');
+            document.getElementById('chatArea').classList.add('d-none');
+            document.getElementById('chatArea').classList.remove('d-flex');
+            if (messagePollingInterval) clearInterval(messagePollingInterval);
+            currentActiveConversationId = null;
+            document.querySelectorAll('.conversation-item').forEach(el => el.classList.remove('active'));
+        }
+
+        async function loadMessages(convId, isPolling = false) {
+            try {
+                const messages = await LookNepal.apiCall(`/messages/${convId}`);
+                const history = document.getElementById('messageHistory');
+                const myUserId = LookNepal.currentUser().id;
+
+                // If polling, only update if there are new messages. Simple check by length isn't perfect but works for simple demo
+                if (isPolling && history.childElementCount === messages.length && messages.length > 0) {
+                    return;
+                }
+
+                history.innerHTML = messages.map(msg => {
+                    const isMine = msg.sender === myUserId;
+                    const time = new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                    return `
+                        <div class="message-bubble ${isMine ? 'message-sent' : 'message-received'}">
+                            <div class="mb-1">${msg.content}</div>
+                            <small class="${isMine ? 'text-light' : 'text-muted'} opacity-75" style="font-size: 0.65rem; float: right;">${time}</small>
+                        </div>
+                    `;
+                }).join('');
+
+                // Scroll to bottom
+                history.scrollTop = history.scrollHeight;
+
+            } catch (error) {
+                console.error('Error loading messages', error);
+            }
+        }
+
+        document.getElementById('messageForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('messageInput');
+            const content = input.value.trim();
+            if (!content || !currentReceiverId) return;
+
+            input.value = ''; // clear immediately
+
+            try {
+                await LookNepal.apiCall('/messages', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        receiverId: currentReceiverId,
+                        content: content
+                    })
+                });
+
+                // Reload messages and conversations list
+                await loadMessages(currentActiveConversationId);
+                await loadConversations();
+
+            } catch (error) {
+                console.error('Error sending message', error);
+                alert('Could not send message. Please try again.');
+            }
+        });
+    </script>
+</body>
+
+</html>

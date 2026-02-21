@@ -1,7 +1,7 @@
 const { MongoClient } = require("mongodb");
 require("dotenv").config(); // Load environment variables from .env file
 
-const client = new MongoClient(uri, {
+const client = new MongoClient(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });

@@ -2,6 +2,7 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const Company = require('../models/Company');
+const Review = require('../models/Review');
 const User = require('../models/User');
 const { authenticate, authorize } = require('../middleware/auth');
 
@@ -116,7 +117,7 @@ router.get('/my-company', authenticate, authorize('employer'), async (req, res) 
     }
 
     const company = await Company.findById(req.user.company);
-    
+
     if (!company) {
       return res.status(404).json({
         message: 'Company profile not found'
@@ -145,7 +146,7 @@ router.get('/:slug', async (req, res) => {
   try {
     const company = await Company.findBySlug(req.params.slug)
       .populate('owner', 'firstName lastName');
-    
+
     if (!company) {
       return res.status(404).json({
         message: 'Company not found'
@@ -258,7 +259,7 @@ router.put('/:id', authenticate, authorize('employer'), [
     }
 
     const company = await Company.findById(req.params.id);
-    
+
     if (!company) {
       return res.status(404).json({
         message: 'Company not found'
@@ -335,7 +336,7 @@ router.get('/:slug/jobs', async (req, res) => {
     }
 
     const Job = require('../models/Job');
-    
+
     const skip = (page - 1) * limit;
     const jobs = await Job.find({
       company: company._id,
@@ -375,6 +376,109 @@ router.get('/:slug/jobs', async (req, res) => {
       message: 'Server error fetching company jobs',
       error: error.message
     });
+  }
+});
+
+/**
+ * @route   GET /api/companies/:slug/reviews
+ * @desc    Get all reviews for a specific company
+ * @access  Public
+ */
+router.get('/:slug/reviews', async (req, res) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+
+    const company = await Company.findBySlug(req.params.slug);
+    if (!company) {
+      return res.status(404).json({ message: 'Company not found' });
+    }
+
+    const skip = (page - 1) * limit;
+    const reviews = await Review.find({ company: company._id })
+      .populate('reviewer', 'firstName lastName')
+      .sort({ createdAt: -1 })
+      .limit(parseInt(limit))
+      .skip(skip)
+      .lean();
+
+    const totalReviews = await Review.countDocuments({ company: company._id });
+
+    res.json({
+      reviews,
+      pagination: {
+        current: parseInt(page),
+        total: Math.ceil(totalReviews / limit),
+        totalReviews
+      }
+    });
+
+  } catch (error) {
+    console.error('Error fetching company reviews:', error);
+    res.status(500).json({
+      message: 'Server error fetching company reviews',
+      error: error.message
+    });
+  }
+});
+
+/**
+ * @route   POST /api/companies/:slug/reviews
+ * @desc    Add a review for a company
+ * @access  Private
+ */
+router.post('/:slug/reviews', authenticate, [
+  body('rating.overall').isInt({ min: 1, max: 5 }).withMessage('Overall rating must be between 1 and 5'),
+  body('title').notEmpty().withMessage('Review title is required'),
+  body('pros').notEmpty().withMessage('Pros are required'),
+  body('cons').notEmpty().withMessage('Cons are required'),
+  body('jobTitle').notEmpty().withMessage('Your job title at the company is required'),
+  body('employmentStatus').isIn(['current', 'former']).withMessage('Employment status must be current or former')
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ message: 'Validation failed', errors: errors.array() });
+    }
+
+    const company = await Company.findBySlug(req.params.slug);
+    if (!company) {
+      return res.status(404).json({ message: 'Company not found' });
+    }
+
+    // Check if user already reviewed this company
+    const existingReview = await Review.findOne({ company: company._id, reviewer: req.user._id });
+    if (existingReview) {
+      return res.status(400).json({ message: 'You have already submitted a review for this company' });
+    }
+
+    const { rating, title, pros, cons, advice, jobTitle, employmentStatus } = req.body;
+
+    const review = new Review({
+      company: company._id,
+      reviewer: req.user._id,
+      rating,
+      title,
+      pros,
+      cons,
+      advice,
+      jobTitle,
+      employmentStatus
+    });
+
+    await review.save();
+
+    // Recalculate company rating overall (simple average for now)
+    const allReviews = await Review.find({ company: company._id }).select('rating.overall');
+    let totalScore = 0;
+    allReviews.forEach(r => totalScore += r.rating.overall);
+    company.rating.overall = parseFloat((totalScore / allReviews.length).toFixed(1));
+    await company.save();
+
+    res.status(201).json({ message: 'Review submitted successfully', review });
+
+  } catch (error) {
+    console.error('Error adding review:', error);
+    res.status(500).json({ message: 'Server error adding review', error: error.message });
   }
 });
 
