@@ -9,6 +9,8 @@ require('dotenv').config(); // Loads environment variables from a .env file
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors'); // Handles Cross-Origin Resource Sharing
+const http = require('http');
+const { Server } = require('socket.io');
 
 // Import Models
 const User = require('./models/User');
@@ -30,6 +32,41 @@ const adminRoutes = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Create HTTP Server and bind Socket.IO
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: '*', // Allow all origins for dev
+    methods: ['GET', 'POST', 'PUT', 'DELETE']
+  }
+});
+
+// Map to track active user socket connections
+const activeUsers = new Map();
+
+io.on('connection', (socket) => {
+  console.log('New WebSocket client connected:', socket.id);
+
+  socket.on('register', (userId) => {
+    activeUsers.set(userId, socket.id);
+    console.log(`User ${userId} registered with socket ${socket.id}`);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('WebSocket disconnected:', socket.id);
+    for (let [userId, sockId] of activeUsers.entries()) {
+      if (sockId === socket.id) {
+        activeUsers.delete(userId);
+        break;
+      }
+    }
+  });
+});
+
+// Make io and activeUsers accessible in routes
+app.set('io', io);
+app.set('activeUsers', activeUsers);
 
 // =================================================================
 //                      3. MIDDLEWARE
@@ -53,7 +90,12 @@ app.use('/uploads', express.static('uploads'));
 // Connect to the MongoDB Atlas cluster.
 
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB connected successfully.'))
+  .then(() => {
+    console.log('MongoDB connected successfully.');
+    // Initialize scheduled cron tasks
+    const { initCronJobs } = require('./utils/cronJobs');
+    initCronJobs();
+  })
   .catch(err => {
     console.error('MongoDB connection error:', err);
     process.exit(1); // Exit the process with an error code if DB connection fails
@@ -89,6 +131,6 @@ app.get('/', (req, res) => {
 // This must be the last part of the file. It starts the server
 // and makes it listen for incoming requests on the specified port.
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

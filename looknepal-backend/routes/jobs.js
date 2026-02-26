@@ -310,6 +310,85 @@ router.post('/', authenticate, authorize('employer'), validateJobCreation, async
 });
 
 /**
+ * @route   GET /api/jobs/analytics
+ * @desc    Get dashboard analytics (job views, application counts, status breakdowns)
+ * @access  Private (Employers only)
+ */
+router.get('/analytics', authenticate, authorize('employer'), async (req, res) => {
+  try {
+    // 1. Find all jobs posted by this employer
+    const employerJobs = await Job.find({ postedBy: req.user._id }, '_id title createdAt');
+    const jobIds = employerJobs.map(job => job._id);
+
+    // If they have no jobs, return zeroed data
+    if (jobIds.length === 0) {
+      return res.json({
+        totalJobs: 0,
+        totalApplications: 0,
+        statusBreakdown: { pending: 0, reviewed: 0, shortlisted: 0, rejected: 0, accepted: 0 },
+        applicationsOverTime: []
+      });
+    }
+
+    // 2. Aggregate Application Status Breakdown
+    const statusAggregation = await require('../models/Application').aggregate([
+      { $match: { job: { $in: jobIds } } },
+      { $group: { _id: '$status', count: { $sum: 1 } } }
+    ]);
+
+    const statusBreakdown = { pending: 0, reviewed: 0, shortlisted: 0, rejected: 0, accepted: 0 };
+    let totalApplications = 0;
+
+    statusAggregation.forEach(stat => {
+      if (statusBreakdown[stat._id] !== undefined) {
+        statusBreakdown[stat._id] = stat.count;
+      }
+      totalApplications += stat.count;
+    });
+
+    // 3. Aggregate Applications Over Time (Last 30 Days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const timeAggregation = await require('../models/Application').aggregate([
+      {
+        $match: {
+          job: { $in: jobIds },
+          appliedAt: { $gte: thirtyDaysAgo }
+        }
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$appliedAt" } },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { "_id": 1 } }
+    ]);
+
+    // Format for Chart.js [ { date: 'YYYY-MM-DD', count: X } ]
+    const applicationsOverTime = timeAggregation.map(item => ({
+      date: item._id,
+      count: item.count
+    }));
+
+    res.json({
+      totalJobs: employerJobs.length,
+      totalApplications,
+      statusBreakdown,
+      applicationsOverTime
+    });
+
+  } catch (error) {
+    console.error('Analytics aggregation error:', error);
+    res.status(500).json({
+      message: 'Server error generating analytics',
+      error: error.message
+    });
+  }
+});
+
+/**
  * @route   GET /api/jobs/my-jobs
  * @desc    Get current employer's job postings
  * @access  Private (Employers only)

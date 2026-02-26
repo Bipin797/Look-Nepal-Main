@@ -18,7 +18,11 @@ router.put('/onboarding', authenticate, [
     body('expectedSalary').optional().isNumeric(),
     body('desiredJobTitles').optional().isArray(),
     body('isRemote').optional().isBoolean(),
-    body('profileVisibility').optional().isIn(['public', 'private'])
+    body('profileVisibility').optional().isIn(['public', 'private']),
+    body('preferences.expectedSalary').optional().isNumeric(),
+    body('preferences.desiredJobTitles').optional().isArray(),
+    body('preferences.isRemote').optional().isBoolean(),
+    body('preferences.profileVisibility').optional().isIn(['public', 'private'])
 ], async (req, res) => {
     try {
         const errors = validationResult(req);
@@ -43,10 +47,17 @@ router.put('/onboarding', authenticate, [
 
         // Initialize or update preferences subset
         if (!user.preferences) user.preferences = {};
-        if (expectedSalary !== undefined) user.preferences.expectedSalary = expectedSalary;
-        if (desiredJobTitles !== undefined) user.preferences.desiredJobTitles = desiredJobTitles;
-        if (isRemote !== undefined) user.preferences.isRemote = isRemote;
-        if (profileVisibility !== undefined) user.preferences.profileVisibility = profileVisibility;
+
+        // Handle flat or nested payload
+        const expSalary = expectedSalary ?? (req.body.preferences?.expectedSalary);
+        const desiredJobs = desiredJobTitles ?? (req.body.preferences?.desiredJobTitles);
+        const remote = isRemote ?? (req.body.preferences?.isRemote);
+        const visibility = profileVisibility ?? (req.body.preferences?.profileVisibility);
+
+        if (expSalary !== undefined) user.preferences.expectedSalary = expSalary;
+        if (desiredJobs !== undefined) user.preferences.desiredJobTitles = desiredJobs;
+        if (remote !== undefined) user.preferences.isRemote = remote;
+        if (visibility !== undefined) user.preferences.profileVisibility = visibility;
 
         // Finally mark onboarding as completed
         user.onboardingCompleted = true;
@@ -150,4 +161,47 @@ router.get('/saved-jobs', authenticate, async (req, res) => {
         res.status(500).json({ message: 'Server error fetching saved jobs' });
     }
 });
+
+/**
+ * @route   GET /api/users/notifications
+ * @desc    Get user's notifications sorted by newest first
+ * @access  Private
+ */
+router.get('/notifications', authenticate, async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id).select('notifications').lean();
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Sort notifications latest first natively
+        const sortedNotifications = (user.notifications || []).sort((a, b) => b.createdAt - a.createdAt);
+
+        res.json({ notifications: sortedNotifications });
+    } catch (error) {
+        console.error('Fetch notifications error:', error);
+        res.status(500).json({ message: 'Server error fetching notifications' });
+    }
+});
+
+/**
+ * @route   PUT /api/users/notifications/read-all
+ * @desc    Mark all unread notifications as read
+ * @access  Private
+ */
+router.put('/notifications/read-all', authenticate, async (req, res) => {
+    try {
+        await User.updateOne(
+            { _id: req.user._id },
+            { $set: { "notifications.$[elem].isRead": true } },
+            { arrayFilters: [{ "elem.isRead": false }] }
+        );
+
+        res.json({ message: 'All notifications marked as read' });
+    } catch (error) {
+        console.error('Mark notifications read error:', error);
+        res.status(500).json({ message: 'Server error updating notifications' });
+    }
+});
+
 module.exports = router;

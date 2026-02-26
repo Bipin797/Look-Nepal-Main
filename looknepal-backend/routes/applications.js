@@ -83,24 +83,48 @@ router.post('/', authenticate, authorize('job_seeker'), validateApplication, asy
     await application.populate('job', 'title company');
     await application.populate('applicant', 'firstName lastName email');
 
-    // Notify Employer via Email (non-blocking)
+    // Notify Employer via Email & Socket (non-blocking)
     if (job.postedBy) {
-      User.findById(job.postedBy).then(employer => {
-        if (employer && employer.email) {
-          sendEmail({
-            to: employer.email,
-            subject: `New Application: ${job.title}`,
-            html: `
-              <h3>Hello ${employer.firstName || 'Employer'},</h3>
-              <p>You have received a new application for your job posting: <strong>${job.title}</strong>.</p>
-              <p><strong>Applicant:</strong> ${application.applicant.firstName} ${application.applicant.lastName} (${application.applicant.email})</p>
-              <p>Please log in to your <a href="http://localhost:5500/employer-dashboard.html">Employer Dashboard</a> to review their profile and cover letter.</p>
-              <br/>
-              <p>Best regards,<br/>The Look Nepal Team</p>
-            `
-          });
+      User.findById(job.postedBy).then(async employer => {
+        if (employer) {
+
+          // 1. Save In-App Notification
+          const newNotification = {
+            message: `New application received for ${job.title} from ${application.applicant.firstName} ${application.applicant.lastName}`,
+            type: 'application',
+            link: 'employer-dashboard.html'
+          };
+          employer.notifications.push(newNotification);
+          await employer.save();
+
+          // 2. Emit Live Socket Event
+          const io = req.app.get('io');
+          const activeUsers = req.app.get('activeUsers');
+          if (io && activeUsers) {
+            const socketId = activeUsers.get(employer._id.toString());
+            if (socketId) {
+              const savedNotif = employer.notifications[employer.notifications.length - 1];
+              io.to(socketId).emit('notification', savedNotif);
+            }
+          }
+
+          // 3. Send Email Dispatch
+          if (employer.email) {
+            sendEmail({
+              to: employer.email,
+              subject: `New Application: ${job.title}`,
+              html: `
+                <h3>Hello ${employer.firstName || 'Employer'},</h3>
+                <p>You have received a new application for your job posting: <strong>${job.title}</strong>.</p>
+                <p><strong>Applicant:</strong> ${application.applicant.firstName} ${application.applicant.lastName} (${application.applicant.email})</p>
+                <p>Please log in to your <a href="http://localhost:5500/employer-dashboard.html">Employer Dashboard</a> to review their profile and cover letter.</p>
+                <br/>
+                <p>Best regards,<br/>The Look Nepal Team</p>
+              `
+            }).catch(err => console.error('Failed to send email notification:', err));
+          }
         }
-      }).catch(err => console.error('Failed to look up employer for email notification:', err));
+      }).catch(err => console.error('Failed to look up employer for notification dispatch:', err));
     }
 
     res.status(201).json({

@@ -112,6 +112,8 @@
                 const returnUrl = urlParams.get('returnUrl');
                 if (returnUrl) {
                     window.location.href = returnUrl;
+                } else if (response.user && response.user.userType === 'employer') {
+                    window.location.href = 'employer-dashboard.html';
                 } else {
                     window.location.href = 'index.html';
                 }

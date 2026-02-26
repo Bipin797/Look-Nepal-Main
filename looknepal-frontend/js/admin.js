@@ -69,6 +69,23 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // Make Stats Cards Clickable
+    const statCards = document.querySelectorAll('.stat-card');
+    statCards.forEach(card => {
+        card.style.cursor = 'pointer';
+        card.style.transition = 'transform 0.2s';
+        card.addEventListener('mouseenter', () => card.style.transform = 'translateY(-2px)');
+        card.addEventListener('mouseleave', () => card.style.transform = 'none');
+        card.addEventListener('click', () => {
+            const label = card.querySelector('.stat-label').textContent.toLowerCase();
+            if (label.includes('user') || label.includes('employer')) {
+                document.querySelector('.nav-link[data-target="usersView"]').click();
+            } else if (label.includes('job') || label.includes('application')) {
+                document.querySelector('.nav-link[data-target="jobsView"]').click();
+            }
+        });
+    });
 });
 
 // Admin API calls will use window.LookNepal.apiCall
@@ -136,7 +153,7 @@ async function loadJobs() {
         }
 
         tbody.innerHTML = jobs.map(job => {
-            const companyName = job.employer ? `${job.employer.firstName} ${job.employer.lastName}` : 'Unknown';
+            const companyName = job.postedBy ? `${job.postedBy.firstName} ${job.postedBy.lastName}` : 'Unknown';
             return `
                 <tr>
                     <td class="fw-bold">${job.title}</td>
@@ -146,7 +163,7 @@ async function loadJobs() {
                             ${job.status}
                         </span>
                     </td>
-                    <td>${new Date(job.postedAt).toLocaleDateString()}</td>
+                    <td>${new Date(job.createdAt).toLocaleDateString()}</td>
                     <td>
                         <button class="action-btn delete" onclick="deleteJob('${job._id}')" title="Delete Job">
                             <i class="fa-solid fa-trash"></i>

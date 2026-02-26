@@ -129,7 +129,7 @@ router.delete('/users/:id', async (req, res) => {
  */
 router.get('/jobs', async (req, res) => {
     try {
-        const jobs = await Job.find().populate('employer', 'firstName lastName email').sort({ postedAt: -1 });
+        const jobs = await Job.find().populate('postedBy', 'firstName lastName email').sort({ postedAt: -1 });
         res.json(jobs);
     } catch (error) {
         console.error('Error fetching jobs:', error);

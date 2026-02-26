@@ -51,8 +51,8 @@
     </div>
     <hr class="m-0">
 
-    <div class="container my-5 flex-grow-1">
-        <div class="row justify-content-center">
+    <div class="container flex-grow-1 d-flex align-items-center justify-content-center py-5">
+        <div class="row justify-content-center w-100">
             <div class="col-md-8 col-lg-6">
                 <!-- Upload Card -->
                 <div class="card border-0 shadow-sm rounded-4">
@@ -204,16 +204,28 @@
 
                 progressBar.style.width = '100%';
 
-                // Success
-                alert('Resume uploaded successfully!');
+                // Success - Notify AI Data
+                let successMessage = 'Resume uploaded successfully!';
+
+                if (data.parsedData && (data.parsedData.skillsAdded.length > 0 || data.parsedData.educationAdded.length > 0)) {
+                    let aiText = 'AI Extracted: ';
+                    if (data.parsedData.skillsAdded.length > 0) aiText += `${data.parsedData.skillsAdded.length} Skills`;
+                    if (data.parsedData.educationAdded.length > 0) aiText += `${data.parsedData.skillsAdded.length > 0 ? ', ' : ''}${data.parsedData.educationAdded.length} Education Credentials`;
+
+                    window.LookNepal.showToast(`Resume mapped to profile! ${aiText}`, 'success');
+                } else {
+                    window.LookNepal.showToast(successMessage, 'success');
+                }
 
                 // Update local user data if needed
                 if (data.user) {
                     LookNepal.setCurrentUser(data.user);
                 }
 
-                // Redirect to profile
-                window.location.href = 'profile.html';
+                // Redirect to profile after short delay to let them read the AI magic
+                setTimeout(() => {
+                    window.location.href = 'profile.html';
+                }, 2000);
 
             } catch (error) {
                 console.error(error);

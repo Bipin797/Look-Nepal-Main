@@ -1,6 +1,7 @@
 // models/User.js
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 const userSchema = new mongoose.Schema({
   // Basic Information
@@ -33,7 +34,6 @@ const userSchema = new mongoose.Schema({
     trim: true
   },
 
-  // User Type and Status
   userType: {
     type: String,
     enum: ['job_seeker', 'employer', 'admin'],
@@ -44,10 +44,29 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  emailVerificationToken: {
+    type: String
+  },
+  emailVerificationExpire: {
+    type: Date
+  },
+  resetPasswordToken: {
+    type: String
+  },
+  resetPasswordExpire: {
+    type: Date
+  },
   isActive: {
     type: Boolean,
     default: true
   },
+  notifications: [{
+    message: String,
+    type: { type: String, enum: ['application', 'message', 'status', 'system'], default: 'system' },
+    link: String,
+    isRead: { type: Boolean, default: false },
+    createdAt: { type: Date, default: Date.now }
+  }],
 
   // Social Login Information
   socialLogin: {
@@ -227,6 +246,20 @@ userSchema.statics.findBySocialLogin = function (provider, socialId) {
   const query = {};
   query[`socialLogin.${provider}.id`] = socialId;
   return this.findOne(query);
+};
+
+// Generate and hash password token
+userSchema.methods.getResetPasswordToken = function () {
+  // Generate token
+  const resetToken = crypto.randomBytes(20).toString('hex');
+
+  // Hash token and set to resetPasswordToken field
+  this.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+  // Set expire (10 minutes)
+  this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+
+  return resetToken;
 };
 
 const User = mongoose.model('User', userSchema);

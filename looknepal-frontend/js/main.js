@@ -45,11 +45,11 @@ function updateNavigation() {
         <div class="dropdown">
           <a href="#" class="text-dark position-relative" data-bs-toggle="dropdown" aria-expanded="false" title="Notifications">
             <i class="fa-solid fa-bell fs-5"></i>
-            <span class="position-absolute p-1 bg-danger border border-light rounded-circle" style="top: 0px; right: 0px;">
+            <span id="navNotificationBadge" class="position-absolute p-1 bg-danger border border-light rounded-circle d-none" style="top: 0px; right: 0px;">
               <span class="visually-hidden">New alerts</span>
             </span>
           </a>
-          <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 p-3 text-center mt-2" style="width: 280px;">
+          <ul id="navNotificationDropdown" class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 p-3 text-center mt-2" style="width: 300px; max-height: 400px; overflow-y: auto;">
             <li class="mb-2"><i class="fa-solid fa-bell-slash fs-2 text-muted opacity-50 mt-2"></i></li>
             <li><h6 class="mb-1 fw-bold">Nothing right now</h6></li>
             <li><small class="text-muted text-wrap">Check back later for new alerts and custom job recommendations.</small></li>
@@ -423,7 +423,22 @@ async function viewJobDetails(jobId, preventRedirect = false) {
     `;
 
     const applyBtn = fastView.querySelector('.apply-btn');
-    if (applyBtn) applyBtn.href = `job-details.html?id=${job._id}&apply=true`;
+    if (applyBtn) {
+      const user = window.LookNepal.currentUser();
+      if (user && user.userType === 'employer') {
+        applyBtn.href = '#';
+        applyBtn.classList.add('disabled', 'btn-secondary');
+        applyBtn.classList.remove('btn-primary');
+        applyBtn.textContent = 'Employers cannot apply';
+        applyBtn.onclick = (e) => e.preventDefault();
+      } else {
+        applyBtn.href = `job-details.html?id=${job._id}&apply=true`;
+        applyBtn.classList.remove('disabled', 'btn-secondary');
+        applyBtn.classList.add('btn-primary');
+        applyBtn.textContent = 'Apply Now';
+        applyBtn.onclick = null;
+      }
+    }
 
     const daysAgo = Math.floor((new Date() - new Date(job.createdAt)) / (1000 * 60 * 60 * 24));
     const cardText = fastView.querySelector('.card-text');
@@ -539,6 +554,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     try {
       currentUser = JSON.parse(storedUser);
       updateNavigation();
+      LookNepal.initSocket();
     } catch (error) {
       console.error('Error parsing stored user:', error);
       logout();
@@ -670,5 +686,159 @@ window.LookNepal = {
     currentUser = user;
     localStorage.setItem('currentUser', JSON.stringify(user));
     updateNavigation();
+  },
+  showToast: function (title, message, type = 'success') {
+    let container = document.getElementById('lookNepalToastContainer');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'lookNepalToastContainer';
+      container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+      container.style.zIndex = '9999';
+      document.body.appendChild(container);
+    }
+
+    const icon = type === 'success' ? 'fa-circle-check text-success' : (type === 'danger' ? 'fa-circle-xmark text-danger' : 'fa-circle-exclamation text-warning');
+
+    const toastEl = document.createElement('div');
+    toastEl.className = `toast border-0 shadow-lg rounded-4`;
+    toastEl.setAttribute('role', 'alert');
+    toastEl.setAttribute('aria-live', 'assertive');
+    toastEl.setAttribute('aria-atomic', 'true');
+
+    toastEl.innerHTML = `
+      <div class="toast-header border-bottom-0 pb-0">
+        <i class="fa-solid ${icon} fs-5 me-2"></i>
+        <strong class="me-auto fw-bold">${title}</strong>
+        <button type="button" class="btn-close shadow-none" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body text-muted pt-2 pb-3 px-3">
+        ${message}
+      </div>
+    `;
+
+    container.appendChild(toastEl);
+    const toast = new bootstrap.Toast(toastEl, { delay: 4000 });
+    toast.show();
+
+    toastEl.addEventListener('hidden.bs.toast', () => {
+      toastEl.remove();
+    });
+  },
+
+  // =================================================================
+  // REAL-TIME WEBSOCKETS (Socket.IO)
+  // =================================================================
+  socket: null,
+  initSocket: function () {
+    if (!LookNepal.currentUser()) return;
+    if (typeof io === 'undefined') {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.socket.io/4.7.4/socket.io.min.js';
+      script.onload = () => LookNepal.connectSocket();
+      document.head.appendChild(script);
+    } else {
+      LookNepal.connectSocket();
+    }
+  },
+  connectSocket: function () {
+    if (LookNepal.socket) return;
+
+    LookNepal.socket = io('http://localhost:3000');
+
+    LookNepal.socket.on('connect', () => {
+      LookNepal.socket.emit('register', LookNepal.currentUser()._id);
+    });
+
+    LookNepal.socket.on('notification', (notif) => {
+      LookNepal.showToast('New Notification', notif.message, 'info');
+      LookNepal.fetchNotifications();
+    });
+
+    LookNepal.socket.on('receive_message', (msg) => {
+      // If user is actively looking at the messaging chatbox, append directly
+      if (window.location.pathname.includes('messages.html') && typeof window.appendMessage === 'function') {
+        window.appendMessage(msg, 'received');
+      } else {
+        // Otherwise fire a toast and generic Bell notification
+        const senderName = msg.sender && msg.sender.firstName ? msg.sender.firstName : 'Someone';
+        LookNepal.showToast('New Message', `You received a message from ${senderName}`, 'info');
+        LookNepal.fetchNotifications();
+      }
+    });
+
+    // Populate initial notifications from DB
+    LookNepal.fetchNotifications();
+  },
+  fetchNotifications: async function () {
+    try {
+      const data = await LookNepal.apiCall('/users/notifications');
+      if (data && data.notifications) {
+        LookNepal.renderNotifications(data.notifications);
+      }
+    } catch (err) {
+      console.error('Failed to fetch notifications', err);
+    }
+  },
+  renderNotifications: function (notifications) {
+    const badge = document.getElementById('navNotificationBadge');
+    const dropdown = document.getElementById('navNotificationDropdown');
+
+    if (!dropdown) return;
+
+    const unreadCount = notifications.filter(n => !n.isRead).length;
+    if (badge) {
+      if (unreadCount > 0) {
+        badge.classList.remove('d-none');
+      } else {
+        badge.classList.add('d-none');
+      }
+    }
+
+    if (notifications.length === 0) {
+      dropdown.innerHTML = `
+        <li class="mb-2"><i class="fa-solid fa-bell-slash fs-2 text-muted opacity-50 mt-2"></i></li>
+        <li><h6 class="mb-1 fw-bold">Nothing right now</h6></li>
+        <li><small class="text-muted text-wrap">Check back later for new alerts.</small></li>
+      `;
+      return;
+    }
+
+    let html = `
+      <div class="d-flex justify-content-between align-items-center mb-2 px-1">
+        <h6 class="mb-0 fw-bold">Notifications</h6>
+        <button class="btn btn-sm btn-link text-decoration-none p-0" onclick="LookNepal.markAllNotificationsRead(event)">Mark all read</button>
+      </div>
+      <hr class="mt-1 mb-2">
+    `;
+
+    notifications.forEach(notif => {
+      const bgClass = notif.isRead ? '' : 'bg-light';
+      const icon = notif.type === 'message' ? 'fa-message' : (notif.type === 'application' ? 'fa-briefcase' : 'fa-bell');
+
+      html += `
+        <li class="text-start mb-2 rounded p-2 ${bgClass}" style="cursor: pointer; transition: background-color 0.2s;" onmouseover="this.classList.add('bg-light')" onmouseout="${notif.isRead ? "this.classList.remove('bg-light')" : ''}" onclick="window.location.href='${notif.link || '#'}'">
+          <div class="d-flex align-items-start gap-2">
+            <div class="text-primary mt-1"><i class="fa-solid ${icon}"></i></div>
+            <div>
+              <small class="d-block text-dark lh-sm">${notif.message}</small>
+              <small class="text-muted" style="font-size: 0.7rem;">${new Date(notif.createdAt).toLocaleDateString()}</small>
+            </div>
+          </div>
+        </li>
+      `;
+    });
+
+    dropdown.innerHTML = html;
+  },
+  markAllNotificationsRead: async function (e) {
+    if (e) e.stopPropagation();
+    try {
+      await LookNepal.apiCall('/users/notifications/read-all', 'PUT');
+      const badge = document.getElementById('navNotificationBadge');
+      if (badge) badge.classList.add('d-none');
+      LookNepal.fetchNotifications();
+    } catch (err) {
+      console.error(err);
+    }
   }
 };

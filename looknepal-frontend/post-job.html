@@ -122,8 +122,10 @@
     <script>
         // Check auth
         if (!LookNepal.currentUser() || LookNepal.currentUser().userType !== 'employer') {
-            alert('You must be logged in as an Employer to post a job.');
-            window.location.href = 'signIn.html';
+            LookNepal.showToast('Access Denied', 'You must be logged in as an Employer to post a job.', 'danger');
+            setTimeout(() => {
+                window.location.href = 'signIn.html';
+            }, 2000);
         }
 
         document.getElementById('postJobForm').addEventListener('submit', async function (e) {
@@ -157,11 +159,13 @@
                     body: JSON.stringify(formData)
                 });
 
-                alert('Job posted successfully!');
-                window.location.href = 'index.html';
+                LookNepal.showToast('Job Published', 'Your job has been posted successfully!', 'success');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
 
             } catch (error) {
-                alert(error.message || 'Failed to post job');
+                LookNepal.showToast('Error', error.message || 'Failed to post job', 'danger');
                 const button = this.querySelector('button[type="submit"]');
                 button.disabled = false;
                 button.textContent = 'Post Job';

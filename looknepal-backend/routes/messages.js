@@ -131,6 +131,20 @@ router.post('/', authenticate, [
 
         await message.save();
 
+        // Ensure the sender is populated before emitting so the frontend can render name/avatar if needed
+        await message.populate('sender', 'firstName lastName profilePicture userType');
+
+        // Setup Real-Time Socket Emission
+        const io = req.app.get('io');
+        const activeUsers = req.app.get('activeUsers');
+
+        if (io && activeUsers) {
+            const recipientSocketId = activeUsers.get(receiverId.toString());
+            if (recipientSocketId) {
+                io.to(recipientSocketId).emit('receive_message', message);
+            }
+        }
+
         // Optionally fetch populated message to return
         res.status(201).json(message);
 
