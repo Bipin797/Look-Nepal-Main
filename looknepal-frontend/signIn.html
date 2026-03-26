@@ -239,8 +239,13 @@
         return;
       }
 
-      if (returnUrl) {
-        window.location.href = returnUrl;
+      // Automatically trace and inject the Apply Now redirect coordinates
+      const urlParams = new URLSearchParams(window.location.search);
+      const dynamicReturnUrl = urlParams.get('returnUrl') || sessionStorage.getItem('returnUrl');
+
+      if (dynamicReturnUrl) {
+        sessionStorage.removeItem('returnUrl'); // Clean up state
+        window.location.href = dynamicReturnUrl;
       } else if (response.user && response.user.userType === 'employer') {
         window.location.href = 'employer-dashboard.html';
       } else {
@@ -252,33 +257,40 @@
     async function handleCredentialResponse(response) {
       console.log('Google ID Token:', response.credential);
 
-      // Decode JWT to get user info (client-side only for display/pre-fill usually, but here we send to backend)
-      const base64Url = response.credential.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      }).join(''));
-
-      const payload = JSON.parse(jsonPayload);
-
       try {
+        // Decode JWT to get user info
+        const base64Url = response.credential.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+
+        const payload = JSON.parse(jsonPayload);
+        
+        // Use fallbacks to prevent Backend 400 validation crashes
+        const firstName = payload.given_name || payload.name || 'User';
+        const lastName = payload.family_name || 'Account';
+
+        console.log('Sending payload to backend...');
         const serverResponse = await LookNepal.apiCall('/auth/social-login', {
           method: 'POST',
           body: JSON.stringify({
             email: payload.email,
-            firstName: payload.given_name,
-            lastName: payload.family_name,
+            firstName: firstName,
+            lastName: lastName,
             provider: 'google',
             providerId: payload.sub,
             photoUrl: payload.picture
           })
         });
 
+        console.log('Backend response:', serverResponse);
+        // Force the redirection explicitly
         handleLoginSuccess(serverResponse);
 
       } catch (error) {
         console.error('Google login error:', error);
-        alert('Google login failed: ' + error.message);
+        alert('Google login failed: ' + error.message + '\nPlease ensure you are running on localhost instead of 127.0.0.1.');
       }
     }
 

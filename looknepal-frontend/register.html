@@ -109,9 +109,11 @@
                 }
 
                 const urlParams = new URLSearchParams(window.location.search);
-                const returnUrl = urlParams.get('returnUrl');
-                if (returnUrl) {
-                    window.location.href = returnUrl;
+                const dynamicReturnUrl = urlParams.get('returnUrl') || sessionStorage.getItem('returnUrl');
+                
+                if (dynamicReturnUrl) {
+                    sessionStorage.removeItem('returnUrl');
+                    window.location.href = dynamicReturnUrl;
                 } else if (response.user && response.user.userType === 'employer') {
                     window.location.href = 'employer-dashboard.html';
                 } else {

@@ -121,7 +121,7 @@
     <!-- Main JavaScript -->
     <script src="js/main.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
+        async function initJobDetails() {
             const urlParams = new URLSearchParams(window.location.search);
             const jobId = urlParams.get('id');
 
@@ -149,24 +149,24 @@
                     ? '<button class="btn btn-secondary btn-lg px-4 fw-bold rounded-3" disabled>Employers cannot apply</button>'
                     : `<button id="primaryApplyBtn" class="btn btn-primary btn-lg px-4 fw-bold rounded-3" onclick="applyForJob('${job._id}')" style="background-color: #0d47a1;">Apply now</button>`;
 
-                const content = \`
+                const content = `
                     <div class="col-12 col-lg-8 mx-auto text-start">
                         <div class="mb-4">
-                            <h1 class="fw-bold mb-2 text-dark" style="font-size: 2.25rem;">\${job.title}</h1>
+                            <h1 class="fw-bold mb-2 text-dark" style="font-size: 2.25rem;">${job.title}</h1>
                             <div class="fs-5 mb-2">
-                                <a href="#" class="text-decoration-underline text-dark">\${company.name || 'Company Name'} <i class="fa-solid fa-arrow-up-right-from-square small text-muted"></i></a>
+                                <a href="#" class="text-decoration-underline text-dark">${company.name || 'Company Name'} <i class="fa-solid fa-arrow-up-right-from-square small text-muted"></i></a>
                             </div>
                             <div class="fs-6 text-dark mb-3">
-                                \${location}
+                                ${location}
                             </div>
                             
                             <div class="fs-6 text-dark fw-bold mb-4">
-                                \${salary} - \${job.jobType}
+                                ${salary} - ${job.jobType}
                             </div>
 
                             <div class="d-flex align-items-center gap-3 mb-5">
-                                \${applyBtnHtml}
-                                <button class="btn btn-light btn-lg px-3 border rounded-3" onclick="openMessageModal()" \${!job.postedBy ? 'disabled' : ''}><i class="fa-regular fa-message"></i></button>
+                                ${applyBtnHtml}
+                                <button class="btn btn-light btn-lg px-3 border rounded-3" onclick="openMessageModal()" ${!job.postedBy ? 'disabled' : ''}><i class="fa-regular fa-message"></i></button>
                                 <button class="btn btn-light btn-lg px-3 border rounded-3"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
                             </div>
                         </div>
@@ -180,12 +180,12 @@
                                         <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <p class="text-muted small mb-3">Send a direct message regarding the <strong>\${job.title}</strong> role.</p>
+                                        <p class="text-muted small mb-3">Send a direct message regarding the <strong>${job.title}</strong> role.</p>
                                         <textarea id="directMessageContent" class="form-control rounded-3 bg-light" rows="4" placeholder="Hello, I am very interested in this opportunity..."></textarea>
                                     </div>
                                     <div class="modal-footer border-top-0 pt-0">
                                         <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
-                                        <button type="button" class="btn btn-primary rounded-pill px-4" onclick="sendDirectMessage('\${job.postedBy ? job.postedBy._id : ''}', '\${job._id}')">Send Message</button>
+                                        <button type="button" class="btn btn-primary rounded-pill px-4" onclick="sendDirectMessage('${job.postedBy ? job.postedBy._id : ''}', '${job._id}')">Send Message</button>
                                     </div>
                                 </div>
                             </div>
@@ -222,12 +222,12 @@
                             
                             <div class="mb-4">
                                 <h6 class="fw-bold d-flex align-items-center gap-2"><i class="fa-solid fa-money-bill text-dark"></i> Pay</h6>
-                                <div class="mt-2 text-dark bg-light px-3 py-2 d-inline-block rounded-2 border">\${salary}</div>
+                                <div class="mt-2 text-dark bg-light px-3 py-2 d-inline-block rounded-2 border">${salary}</div>
                             </div>
 
                             <div class="mb-4">
                                 <h6 class="fw-bold d-flex align-items-center gap-2"><i class="fa-solid fa-briefcase text-dark"></i> Job type</h6>
-                                <div class="mt-2 text-dark bg-light px-3 py-2 d-inline-block rounded-2 border">\${job.jobType}</div>
+                                <div class="mt-2 text-dark bg-light px-3 py-2 d-inline-block rounded-2 border">${job.jobType}</div>
                             </div>
 
                             <div class="mb-4">
@@ -241,7 +241,7 @@
                         <div class="mb-5">
                             <h3 class="fw-bold mb-4">Location</h3>
                             <div class="d-flex align-items-center gap-2 text-dark fs-5">
-                                <i class="fa-solid fa-location-dot text-muted"></i> \${location}
+                                <i class="fa-solid fa-location-dot text-muted"></i> ${location}
                             </div>
                         </div>
 
@@ -251,23 +251,23 @@
                             <h3 class="fw-bold mb-4">Full job description</h3>
                             
                             <h5 class="fw-bold mb-3">Job Summary</h5>
-                            <p class="fs-6 lh-lg">\${job.description}</p>
+                            <p class="fs-6 lh-lg">${job.description}</p>
                             
                             <h5 class="fw-bold mb-3 mt-4">Key Responsibilities & Requirements</h5>
-                            <div class="fs-6 lh-lg">\${job.requirements}</div>
+                            <div class="fs-6 lh-lg">${job.requirements}</div>
 
-                            \${job.responsibilities ? \`
+                            ${job.responsibilities ? `
                                 <h5 class="fw-bold mb-3 mt-4">Responsibilities</h5>
-                                <div class="fs-6 lh-lg">\${job.responsibilities}</div>
-                            \` : ''}
+                                <div class="fs-6 lh-lg">${job.responsibilities}</div>
+                            ` : ''}
                             
-                            \${job.benefits ? \`
+                            ${job.benefits ? `
                                 <h5 class="fw-bold mb-3 mt-4">Benefits</h5>
-                                <div class="fs-6 lh-lg">\${job.benefits}</div>
-                            \` : ''}
+                                <div class="fs-6 lh-lg">${job.benefits}</div>
+                            ` : ''}
                         </div>
                     </div>
-                \`;
+                `;
 
                 document.getElementById('jobDetailsContent').innerHTML = content;
 
@@ -279,10 +279,17 @@
 
             } catch (error) {
                 document.getElementById('jobDetailsContent').innerHTML = `
-                    < div class="alert alert-danger" > Error loading job details: ${ error.message }</div >
+                    <div class="alert alert-danger">Error loading job details: ${error.message}</div>
                 `;
             }
-        });
+        }
+
+        // Execute immediately if DOM is already parsed, otherwise wait for it
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initJobDetails);
+        } else {
+            initJobDetails();
+        }
 
         function applyForJob(jobId) {
             const user = LookNepal.currentUser();
